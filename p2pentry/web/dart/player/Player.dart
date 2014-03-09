@@ -19,15 +19,16 @@ class Player extends PhysicsEntity {
     static const double FOV = 80.0;
     static const double ZNEAR = 0.001;
     static const double ZFAR = 10000.0;
-    double playerSpeed = 100.0;
-    double playerImpulseSpeed = 100.0 * 10.0;
+    double playerWalkSpeed = 2.0;
+    double playerForceSpeed = 100000.0;
+    double playerJumpSpeed = 2.0;
     double mouseSensitivity = 0.35;
 
     // Player dimensions
     double playerHeight = 1.85;
     double playerEyeDistFromTop = 0.20;
     double playerWidth = 0.60;
-    double playerFriction = 0.3;
+    double playerFriction = 0.0;
     double playerRestitution = 0.3;
     double playerMass = 60.0;
 
@@ -46,6 +47,10 @@ class Player extends PhysicsEntity {
         },
         "walk_left" : {
             "key" : KeyCode.A,
+            "down" : false,
+        },
+        "walk_jump" : {
+            "key" : KeyCode.SPACE,
             "down" : false,
         },
         "fly_up" : {
@@ -80,12 +85,12 @@ class Player extends PhysicsEntity {
     void setupPhysics(){
         JsObject geometry = new JsObject(context["THREE"]["CylinderGeometry"], [playerWidth / 2, playerWidth / 2, playerHeight]);
         JsObject material = context["Physijs"].callMethod("createMaterial", [
-            new JsObject(context["THREE"]["MeshBasicMaterial"], [new JsObject.jsify({"transparent" : true})]),
+            new JsObject(context["THREE"]["MeshBasicMaterial"], [new JsObject.jsify({"transparent" : true, "opacity" : 0.0, "visible" : false})]),
             playerFriction,
             playerRestitution
         ]);
         this.entityMesh = new JsObject(context["Physijs"]["CapsuleMesh"], [geometry, material, playerMass]);
-        updatePosition();
+        this.entityMesh.callMethod("addEventListener", ["ready", new JsFunction.withThis((a) => deangulate())]);
     }
 
     void keyDownListener(KeyboardEvent event){
@@ -123,6 +128,7 @@ class Player extends PhysicsEntity {
         camera["position"]["z"] = entityMesh["position"]["z"];
     }
 
+    double ticksNotWalking = 0.0;
     void walk(num delta){
         Vector3 change = new Vector3.all(0.0);
         if(keybindings["walk_forwards"]["down"] == true){
@@ -141,20 +147,34 @@ class Player extends PhysicsEntity {
             change.x += Math.cos(radians(rotation.y + 180.0));
             change.z += Math.sin(radians(rotation.y + 180.0));
         }
+        change = change.normalize();
+        if(keybindings["walk_jump"]["down"] == true && onGround == true){
+            change.y += playerJumpSpeed;
+        }
         if(keybindings["fly_up"]["down"] == true){
             change.y += 1;
         }
         if(keybindings["fly_down"]["down"] == true){
             change.y -= 1;
         }
-        change = change.normalize();
+        if(change.x == 0.0 && change.z == 0.0) ticksNotWalking+=delta/0.008; else ticksNotWalking = 0.0;
 
+        this.entityMesh.callMethod("applyCentralForce", [new JsObject(context["THREE"]["Vector3"], [change.x * delta * playerForceSpeed, change.y * delta * playerForceSpeed, change.z * delta * playerForceSpeed])]);
+    }
+
+    void physTick(){
+        // Limit speed of walking
         JsObject linvel = this.entityMesh.callMethod("getLinearVelocity");
-        Vector3 linearVelocity = new Vector3(change.x == 0.0 ? /*linvel["x"].toDouble()*/0.0 : change.x * delta * playerImpulseSpeed,
-                change.y == 0.0 ? linvel["y"].toDouble() : change.y * delta * playerImpulseSpeed,
-                        change.z == 0.0 ? /*linvel["z"].toDouble()*/0.0 : change.z * delta * playerImpulseSpeed);
+        Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
 
-        this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
+        double currentSpeed = linearVelocity.xz.length;
+        if(ticksNotWalking > 16.0){
+            this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [0.0, linearVelocity.y, 0.0])]);
+        }else if(currentSpeed > playerWalkSpeed){
+            linearVelocity.x *= playerWalkSpeed / currentSpeed;
+            linearVelocity.z *= playerWalkSpeed / currentSpeed;
+            this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
+        }
     }
 
     void look(){
@@ -188,5 +208,9 @@ class Player extends PhysicsEntity {
 
     void deangulate(){
         this.entityMesh.callMethod("setAngularFactor", [new JsObject(context["THREE"]["Vector3"], [0, 0, 0])]);
+    }
+
+    bool get onGround {
+        return true;
     }
 }

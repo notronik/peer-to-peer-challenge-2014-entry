@@ -23,9 +23,9 @@ abstract class Entity {
     }
 
     void updateRotation(){
-        entityMesh["rotation"]["x"] = rotation.x;
-        entityMesh["rotation"]["y"] = rotation.y;
-        entityMesh["rotation"]["z"] = rotation.z;
+        entityMesh["rotation"]["x"] = radians(rotation.x);
+        entityMesh["rotation"]["y"] = radians(rotation.y);
+        entityMesh["rotation"]["z"] = radians(rotation.z);
     }
 
     void tick(num delta);

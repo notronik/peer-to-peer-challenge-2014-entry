@@ -21,13 +21,11 @@ class Game {
 
         player = new Player(canvas, position: new Vector3(0.0, 2.0, 2.0));
 
-        world = new World();
-        world.attachEntity(player);
-        player.deangulate();
+        world = new World(player);
         world.attachEntity(new PlaneEntity());
         world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.0, 0.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(-2.0, 10.0, -2.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(2.0, 10.0, -2.0)));
+        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.9, 0.0)));
+        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 11.8, 0.0)));
 
         renderer = new JsObject(context["THREE"]["WebGLRenderer"], [new JsObject.jsify({"canvas":canvas})]);
 
@@ -35,8 +33,8 @@ class Game {
     }
 
     void render(num delta){
+        world.scene.callMethod("simulate");
         renderer.callMethod("render", [world.scene, player.camera]);
-
         window.animationFrame.then(render, onError:timerError);
     }
 
@@ -52,7 +50,7 @@ class Game {
     void initialiseTimers(){
         // Start Tick Timer
         tickTimerTime = new DateTime.now();
-        tickTimer = new Timer.periodic(new Duration(milliseconds:8), tick);
+        tickTimer = new Timer.periodic(new Duration(milliseconds:8), tick); // 125 ticks = 1 second
         // Start Render 'Timer'
         window.animationFrame.then(render, onError:timerError);
     }

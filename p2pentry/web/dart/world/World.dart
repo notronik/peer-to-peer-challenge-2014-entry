@@ -5,8 +5,10 @@ class World {
     JsObject scene;
     List<Entity> attachedEntities = new List<Entity>();
 
-    World(){
+    World(Player player){
         scene = new JsObject(context["Physijs"]["Scene"]);
+        scene.callMethod("addEventListener", ["update", new JsFunction.withThis((a) => player.physTick())]);
+        attachEntity(player);
     }
 
     void attachEntity(Entity entity){
@@ -25,6 +27,5 @@ class World {
         for(Entity entity in attachedEntities){
             entity.tick(delta);
         }
-        scene.callMethod("simulate");
     }
 }
