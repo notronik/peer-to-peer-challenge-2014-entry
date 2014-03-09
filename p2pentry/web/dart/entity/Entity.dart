@@ -11,15 +11,21 @@ abstract class Entity {
         if(rotation != null) this.rotation = rotation;
     }
 
-    void preTick(num delta){
+    void postConstructor(){
+        updatePosition();
+        updateRotation();
+    }
+
+    void updatePosition(){
         entityMesh["position"]["x"] = position.x;
         entityMesh["position"]["y"] = position.y;
         entityMesh["position"]["z"] = position.z;
+    }
+
+    void updateRotation(){
         entityMesh["rotation"]["x"] = rotation.x;
         entityMesh["rotation"]["y"] = rotation.y;
         entityMesh["rotation"]["z"] = rotation.z;
-
-        tick(delta);
     }
 
     void tick(num delta);

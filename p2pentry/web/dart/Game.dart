@@ -12,14 +12,22 @@ class Game {
     DateTime tickTimerTime;
 
     Game(){
+        // * PHYSIJS SETUP * //
+        context["Physijs"]["scripts"]["worker"] = "js/physijs_worker.js";
+        context["Physijs"]["scripts"]["ammo"] = "ammo.small.js";
+        // ----------------- //
+
         canvas = querySelector("#game");
 
-        player = new Player(canvas, position: new Vector3(0.0, 0.0, 2.0));
+        player = new Player(canvas, position: new Vector3(0.0, 2.0, 2.0));
 
         world = new World();
-        world.attachEntity(new CrateEntity(size: new Vector3.all(1.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(-2.0, 0.0, -2.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(2.0, 0.0, -2.0)));
+        world.attachEntity(player);
+        player.deangulate();
+        world.attachEntity(new PlaneEntity());
+        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.0, 0.0)));
+        world.attachEntity(new CrateEntity(position: new Vector3(-2.0, 10.0, -2.0)));
+        world.attachEntity(new CrateEntity(position: new Vector3(2.0, 10.0, -2.0)));
 
         renderer = new JsObject(context["THREE"]["WebGLRenderer"], [new JsObject.jsify({"canvas":canvas})]);
 
@@ -39,7 +47,6 @@ class Game {
         tickTimerTime = now;
 
         world.tick(delta);
-        player.tick(delta);
     }
 
     void initialiseTimers(){
