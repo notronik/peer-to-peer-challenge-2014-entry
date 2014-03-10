@@ -19,13 +19,16 @@ class Game {
 
         canvas = querySelector("#game");
 
-        player = new Player(canvas, position: new Vector3(0.0, 2.0, 2.0));
+        player = new Player(this, canvas, position: new Vector3(0.0, 2.0, 2.0));
 
-        world = new World(player);
+        world = new World(this, player);
         world.attachEntity(new PlaneEntity());
         world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.0, 0.0)));
         world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.9, 0.0)));
         world.attachEntity(new CrateEntity(position: new Vector3(0.0, 11.8, 0.0)));
+        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.0, -1.0)));
+        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.9, -1.0)));
+        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.0, -2.0)));
 
         renderer = new JsObject(context["THREE"]["WebGLRenderer"], [new JsObject.jsify({"canvas":canvas})]);
 

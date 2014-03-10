@@ -10,6 +10,8 @@ class Player extends PhysicsEntity {
      * All in degrees. Radian conversions are made where necessary.
      */
 
+    Game game;
+
     Vector3 position = new Vector3.all(0.0), rotation = new Vector3.all(0.0);
     Vector2 deltaMouse = new Vector2.all(0.0);
 
@@ -21,7 +23,7 @@ class Player extends PhysicsEntity {
     static const double ZFAR = 10000.0;
     double playerWalkSpeed = 2.0;
     double playerForceSpeed = 100000.0;
-    double playerJumpSpeed = 2.0;
+    double playerJumpSpeed = 200.0;
     double mouseSensitivity = 0.35;
 
     // Player dimensions
@@ -31,6 +33,10 @@ class Player extends PhysicsEntity {
     double playerFriction = 0.0;
     double playerRestitution = 0.3;
     double playerMass = 60.0;
+    bool lastOnGround = false;
+
+    double ticksNotWalking = 0.0;
+    double ticksJumpThrottled = 0.0;
 
     Map<String, Map<String, dynamic>> keybindings = {
         "walk_forwards" : {
@@ -63,7 +69,8 @@ class Player extends PhysicsEntity {
         }
     };
 
-    Player(CanvasElement canvas, {Vector3 position, Vector3 rotation}) : super(position, rotation){
+    Player(Game game, CanvasElement canvas, {Vector3 position, Vector3 rotation}) : super(position, rotation){
+        this.game = game;
         if(position != null) this.position = position;
         if(rotation != null) this.rotation = rotation;
         this.canvas = canvas;
@@ -128,7 +135,6 @@ class Player extends PhysicsEntity {
         camera["position"]["z"] = entityMesh["position"]["z"];
     }
 
-    double ticksNotWalking = 0.0;
     void walk(num delta){
         Vector3 change = new Vector3.all(0.0);
         if(keybindings["walk_forwards"]["down"] == true){
@@ -148,8 +154,17 @@ class Player extends PhysicsEntity {
             change.z += Math.sin(radians(rotation.y + 180.0));
         }
         change = change.normalize();
-        if(keybindings["walk_jump"]["down"] == true && onGround == true){
+        if(ticksJumpThrottled > 0.0){
+            ticksJumpThrottled--;
+        }
+        if(keybindings["walk_jump"]["down"] == true && onGround == true && ticksJumpThrottled == 0.0){
             change.y += playerJumpSpeed;
+            JsObject linvel = this.entityMesh.callMethod("getLinearVelocity");
+            this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linvel["x"].toDouble(), 0.0, linvel["z"].toDouble()])]);
+            ticksJumpThrottled = 6.0;
+
+            this.entityMesh.callMethod("applyCentralImpulse", [new JsObject(context["THREE"]["Vector3"], [0.0, change.y * delta * playerJumpSpeed, 0.0])]);
+            change.y = 0.0;
         }
         if(keybindings["fly_up"]["down"] == true){
             change.y += 1;
@@ -167,12 +182,17 @@ class Player extends PhysicsEntity {
         JsObject linvel = this.entityMesh.callMethod("getLinearVelocity");
         Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
 
-        double currentSpeed = linearVelocity.xz.length;
+        double linearSpeed = linearVelocity.xz.length;
         if(ticksNotWalking > 16.0){
             this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [0.0, linearVelocity.y, 0.0])]);
-        }else if(currentSpeed > playerWalkSpeed){
-            linearVelocity.x *= playerWalkSpeed / currentSpeed;
-            linearVelocity.z *= playerWalkSpeed / currentSpeed;
+            // TODO: DAMPING
+//            this.entityMesh.callMethod("setDamping", [new JsObject(context["THREE"]["Vector3"], [
+//                                                                                                        new JsObject(context["THREE"]["Vector3"], [1000.0, 0.0, 1000.0]),
+//                                                                                                        new JsObject(context["THREE"]["Vector3"], [0.0, 0.0, 0.0])
+//                                                                                                        ])]);
+        }else if(linearSpeed > playerWalkSpeed){
+            linearVelocity.x *= playerWalkSpeed / linearSpeed;
+            linearVelocity.z *= playerWalkSpeed / linearSpeed;
             this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
         }
     }
@@ -211,6 +231,21 @@ class Player extends PhysicsEntity {
     }
 
     bool get onGround {
-        return true;
+        JsObject raycaster = new JsObject(context["THREE"]["Raycaster"], [
+            entityMesh["position"],
+            new JsObject(context["THREE"]["Vector3"], [0, -1, 0]),
+            0.0,
+            (playerHeight / 2) + 10.0
+        ]);
+        JsArray objects = new JsArray.from(game.world.getEntityMeshes(game.world.getEntitiesBelowPlayer()));
+        JsArray result = raycaster.callMethod("intersectObjects", [objects, false]);
+        if(result.length > 0){
+            double distance = MathUtils.roundTo(result.elementAt(0)["distance"] - (playerHeight / 2.0), 100.0);
+            lastOnGround = distance == 0.0;
+            return distance == 0.0;
+        }else{
+            lastOnGround = false;
+            return false;
+        }
     }
 }

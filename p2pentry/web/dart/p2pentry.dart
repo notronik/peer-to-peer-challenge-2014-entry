@@ -7,6 +7,7 @@ import "dart:math" as Math;
 import "package:vector_math/vector_math.dart";
 
 part "Game.dart";
+part "MathUtils.dart";
 
 part "world/World.dart";
 
