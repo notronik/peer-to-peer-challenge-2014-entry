@@ -35,7 +35,7 @@ class Player extends PhysicsEntity {
     double playerMass = 60.0;
     bool lastOnGround = false;
 
-    double ticksNotWalking = 0.0;
+    bool walking = false;
     double ticksJumpThrottled = 0.0;
 
     Map<String, Map<String, dynamic>> keybindings = {
@@ -129,6 +129,7 @@ class Player extends PhysicsEntity {
 
     void tick(num delta){
         walk(delta);
+        antiWalk(delta);
 
         camera["position"]["x"] = entityMesh["position"]["x"];
         camera["position"]["y"] = entityMesh["position"]["y"] + (playerHeight / 2) - playerEyeDistFromTop;
@@ -172,9 +173,17 @@ class Player extends PhysicsEntity {
         if(keybindings["fly_down"]["down"] == true){
             change.y -= 1;
         }
-        if(change.x == 0.0 && change.z == 0.0) ticksNotWalking+=delta/0.008; else ticksNotWalking = 0.0;
+        walking = !(change.x == 0.0 && change.z == 0.0);
 
         this.entityMesh.callMethod("applyCentralForce", [new JsObject(context["THREE"]["Vector3"], [change.x * delta * playerForceSpeed, change.y * delta * playerForceSpeed, change.z * delta * playerForceSpeed])]);
+    }
+
+    void antiWalk(num delta){
+        JsObject linvel = this.entityMesh.callMethod("getLinearVelocity");
+        print("${MathUtils.roundTo(linvel["x"].toDouble(), 100.0)} ${MathUtils.roundTo(linvel["z"].toDouble(), 100.0)}");
+        if(!walking){
+
+        }
     }
 
     void physTick(){
@@ -183,13 +192,8 @@ class Player extends PhysicsEntity {
         Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
 
         double linearSpeed = linearVelocity.xz.length;
-        if(ticksNotWalking > 16.0){
+        if(!walking){
             this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [0.0, linearVelocity.y, 0.0])]);
-            // TODO: DAMPING
-//            this.entityMesh.callMethod("setDamping", [new JsObject(context["THREE"]["Vector3"], [
-//                                                                                                        new JsObject(context["THREE"]["Vector3"], [1000.0, 0.0, 1000.0]),
-//                                                                                                        new JsObject(context["THREE"]["Vector3"], [0.0, 0.0, 0.0])
-//                                                                                                        ])]);
         }else if(linearSpeed > playerWalkSpeed){
             linearVelocity.x *= playerWalkSpeed / linearSpeed;
             linearVelocity.z *= playerWalkSpeed / linearSpeed;
