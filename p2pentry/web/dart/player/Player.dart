@@ -252,4 +252,8 @@ class Player extends PhysicsEntity {
             return false;
         }
     }
+
+    num calculateVelocityFromTime(num time){
+        return Math.pow(time, 2) * 60;
+    }
 }
