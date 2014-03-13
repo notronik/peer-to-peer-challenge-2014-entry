@@ -1,4 +1,4 @@
-part of p2pentry;
+part of game;
 
 class PlaneEntity extends PhysicsEntity {
     static const double PLANE_THICKNESS = 0.0009;
@@ -6,8 +6,8 @@ class PlaneEntity extends PhysicsEntity {
     PlaneEntity({Vector3 position, Vector3 rotation, Vector2 size}) : super(position, rotation) {
         if(size != null) this.size = size;
         JsObject geometry = new JsObject(context["THREE"]["CubeGeometry"], [this.size.x, PLANE_THICKNESS, this.size.y]);
-        JsObject material = context["Physijs"].callMethod("createMaterial", [new JsObject(context["THREE"]["MeshBasicMaterial"], [new JsObject.jsify({"color": 0x53b0fe})]), 1.0, 0.0]);
-        this.entityMesh = new JsObject(context["Physijs"]["BoxMesh"], [geometry, material, 0]);
+        JsObject material = context["Physijs"].callMethod("createMaterial", [new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject.jsify({"color": 0x53b0fe, "ambient": 0x53b0fe})]), 1.0, 0.0]);
+        this.sceneAttachment = new JsObject(context["Physijs"]["BoxMesh"], [geometry, material, 0]);
         postConstructor();
     }
 

@@ -1,4 +1,4 @@
-part of p2pentry;
+part of game;
 
 class Player extends PhysicsEntity {
 
@@ -21,22 +21,24 @@ class Player extends PhysicsEntity {
     static const double FOV = 80.0;
     static const double ZNEAR = 0.001;
     static const double ZFAR = 10000.0;
-    double playerWalkSpeed = 2.0;
-    double playerForceSpeed = 100000.0;
-    double playerJumpSpeed = 200.0;
+    double playerWalkSpeed = 8.0;
+    double playerForceSpeed = 900.0;
+    double playerJumpSpeed = 35.0;
     double mouseSensitivity = 0.35;
 
     // Player dimensions
-    double playerHeight = 1.85;
-    double playerEyeDistFromTop = 0.20;
-    double playerWidth = 0.60;
-    double playerFriction = 0.0;
+    double playerWidth = 0.5;
+    double playerFriction = 1.0;
     double playerRestitution = 0.3;
-    double playerMass = 60.0;
+    double playerMass = 2.0;
     bool lastOnGround = false;
 
     bool walking = false;
     double ticksJumpThrottled = 0.0;
+
+    static const double MAX_ZOOM = 5.0;
+    static const double MIN_ZOOM = 25.0;
+    double zoomFactor = ((MAX_ZOOM + MIN_ZOOM) / 2);
 
     Map<String, Map<String, dynamic>> keybindings = {
         "walk_forwards" : {
@@ -82,6 +84,7 @@ class Player extends PhysicsEntity {
         window.onKeyDown.listen(keyDownListener);
         window.onKeyUp.listen(keyUpListener);
         canvas.onMouseMove.listen(mouseMoveListener);
+        canvas.onMouseWheel.listen(mouseZoomListener);
 
         canvas.onClick.listen((MouseClickEvent){
             canvas.requestPointerLock();
@@ -90,14 +93,13 @@ class Player extends PhysicsEntity {
     }
 
     void setupPhysics(){
-        JsObject geometry = new JsObject(context["THREE"]["CylinderGeometry"], [playerWidth / 2, playerWidth / 2, playerHeight]);
+        JsObject geometry = new JsObject(context["THREE"]["SphereGeometry"], [playerWidth, 60, 60]);
         JsObject material = context["Physijs"].callMethod("createMaterial", [
-            new JsObject(context["THREE"]["MeshBasicMaterial"], [new JsObject.jsify({"transparent" : true, "opacity" : 0.0, "visible" : false})]),
+            new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject.jsify({"color" : 0xff00ff, "ambient" : 0xff00ff})]),
             playerFriction,
             playerRestitution
         ]);
-        this.entityMesh = new JsObject(context["Physijs"]["CapsuleMesh"], [geometry, material, playerMass]);
-        this.entityMesh.callMethod("addEventListener", ["ready", new JsFunction.withThis((a) => deangulate())]);
+        this.sceneAttachment = new JsObject(context["Physijs"]["SphereMesh"], [geometry, material, playerMass]);
     }
 
     void keyDownListener(KeyboardEvent event){
@@ -127,13 +129,13 @@ class Player extends PhysicsEntity {
         look();
     }
 
+    void mouseZoomListener(WheelEvent event){
+        zoomFactor += event.deltaY;
+        zoomFactor = zoomFactor.clamp(MAX_ZOOM, MIN_ZOOM);
+    }
+
     void tick(num delta){
         walk(delta);
-        antiWalk(delta);
-
-        camera["position"]["x"] = entityMesh["position"]["x"];
-        camera["position"]["y"] = entityMesh["position"]["y"] + (playerHeight / 2) - playerEyeDistFromTop;
-        camera["position"]["z"] = entityMesh["position"]["z"];
     }
 
     void walk(num delta){
@@ -160,11 +162,11 @@ class Player extends PhysicsEntity {
         }
         if(keybindings["walk_jump"]["down"] == true && onGround == true && ticksJumpThrottled == 0.0){
             change.y += playerJumpSpeed;
-            JsObject linvel = this.entityMesh.callMethod("getLinearVelocity");
-            this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linvel["x"].toDouble(), 0.0, linvel["z"].toDouble()])]);
+            JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
+            this.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linvel["x"].toDouble(), 0.0, linvel["z"].toDouble()])]);
             ticksJumpThrottled = 6.0;
 
-            this.entityMesh.callMethod("applyCentralImpulse", [new JsObject(context["THREE"]["Vector3"], [0.0, change.y * delta * playerJumpSpeed, 0.0])]);
+            this.sceneAttachment.callMethod("applyCentralImpulse", [new JsObject(context["THREE"]["Vector3"], [0.0, change.y * delta * playerJumpSpeed, 0.0])]);
             change.y = 0.0;
         }
         if(keybindings["fly_up"]["down"] == true){
@@ -175,29 +177,20 @@ class Player extends PhysicsEntity {
         }
         walking = !(change.x == 0.0 && change.z == 0.0);
 
-        this.entityMesh.callMethod("applyCentralForce", [new JsObject(context["THREE"]["Vector3"], [change.x * delta * playerForceSpeed, change.y * delta * playerForceSpeed, change.z * delta * playerForceSpeed])]);
-    }
-
-    void antiWalk(num delta){
-        JsObject linvel = this.entityMesh.callMethod("getLinearVelocity");
-        print("${MathUtils.roundTo(linvel["x"].toDouble(), 100.0)} ${MathUtils.roundTo(linvel["z"].toDouble(), 100.0)}");
-        if(!walking){
-
-        }
+        this.sceneAttachment.callMethod("applyCentralForce", [new JsObject(context["THREE"]["Vector3"], [change.x * delta * playerForceSpeed, change.y * delta * playerForceSpeed, change.z * delta * playerForceSpeed])]);
     }
 
     void physTick(){
+        updateCamera();
         // Limit speed of walking
-        JsObject linvel = this.entityMesh.callMethod("getLinearVelocity");
+        JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
         Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
 
         double linearSpeed = linearVelocity.xz.length;
-        if(!walking){
-            this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [0.0, linearVelocity.y, 0.0])]);
-        }else if(linearSpeed > playerWalkSpeed){
+        if(linearSpeed > playerWalkSpeed){
             linearVelocity.x *= playerWalkSpeed / linearSpeed;
             linearVelocity.z *= playerWalkSpeed / linearSpeed;
-            this.entityMesh.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
+            this.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
         }
     }
 
@@ -206,18 +199,29 @@ class Player extends PhysicsEntity {
         rotation.y += deltaMouse.x * mouseSensitivity;
         rotation.y = cclamp(rotation.y);
         rotation.x = rotation.x.clamp(-90.0, 90.0);
+    }
+
+    void updateCamera(){
+        JsObject entityPos = sceneAttachment["position"];
+        Vector3 workPos = position;
+        workPos.x = 0.0;
+        workPos.y = Math.sin(radians(rotation.x));
+        workPos.z = Math.cos(radians(rotation.x));
+        workPos *= zoomFactor;
+
         Quaternion qrotation = new Quaternion.identity();
-        qrotation.setEuler(radians(-rotation.y), radians(-rotation.x), 0.0);
-
+        qrotation.setEuler(radians(-rotation.y), 0.0, 0.0);
         Matrix3 rotationMatrix = qrotation.asRotationMatrix();
-        JsObject threeMatrix = new JsObject(context["THREE"]["Matrix4"], [
-           rotationMatrix.row0.x, rotationMatrix.row0.y, rotationMatrix.row0.z, 0.0,
-           rotationMatrix.row1.x, rotationMatrix.row1.y, rotationMatrix.row1.z, 0.0,
-           rotationMatrix.row2.x, rotationMatrix.row2.y, rotationMatrix.row2.z, 0.0,
-           0.0, 0.0, 0.0, 1.0
-        ]);
+        workPos = rotationMatrix * workPos;
+        workPos.x += entityPos["x"];
+        workPos.y += entityPos["y"];
+        workPos.z += entityPos["z"];
+        position = workPos;
 
-        camera["rotation"].callMethod("setFromRotationMatrix", [threeMatrix]);
+        camera["position"]["x"] = position.x;
+        camera["position"]["y"] = position.y;
+        camera["position"]["z"] = position.z;
+        camera.callMethod("lookAt", [sceneAttachment["position"]]);
     }
 
     double cclamp(double val){
@@ -230,21 +234,17 @@ class Player extends PhysicsEntity {
         return val;
     }
 
-    void deangulate(){
-        this.entityMesh.callMethod("setAngularFactor", [new JsObject(context["THREE"]["Vector3"], [0, 0, 0])]);
-    }
-
     bool get onGround {
         JsObject raycaster = new JsObject(context["THREE"]["Raycaster"], [
-            entityMesh["position"],
+            sceneAttachment["position"],
             new JsObject(context["THREE"]["Vector3"], [0, -1, 0]),
             0.0,
-            (playerHeight / 2) + 10.0
+            10.0
         ]);
         JsArray objects = new JsArray.from(game.world.getEntityMeshes(game.world.getEntitiesBelowPlayer()));
         JsArray result = raycaster.callMethod("intersectObjects", [objects, false]);
         if(result.length > 0){
-            double distance = MathUtils.roundTo(result.elementAt(0)["distance"] - (playerHeight / 2.0), 100.0);
+            double distance = MathUtils.roundTo(result.elementAt(0)["distance"] - playerWidth, 100.0);
             lastOnGround = distance == 0.0;
             return distance == 0.0;
         }else{

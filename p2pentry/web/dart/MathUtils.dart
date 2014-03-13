@@ -1,4 +1,4 @@
-part of p2pentry;
+part of game;
 
 class MathUtils {
     static double roundTo(double val, double measure){

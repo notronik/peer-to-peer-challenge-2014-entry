@@ -1,53 +1,49 @@
-part of p2pentry;
+part of game;
 
 class World {
 
     Game game;
     JsObject scene;
-    List<Entity> attachedEntities = new List<Entity>();
-    Player player;
+    List<SceneObject> attachedEntities = new List<SceneObject>();
 
-    World(Game game, Player player){
-        this.game = game;
-        this.player = player;
+    World(Game this.game){
         scene = new JsObject(context["Physijs"]["Scene"]);
-        scene.callMethod("addEventListener", ["update", new JsFunction.withThis((a) => this.player.physTick())]);
-        attachEntity(this.player);
+        scene.callMethod("addEventListener", ["update", new JsFunction.withThis((a) => game.player.physTick())]);
     }
 
-    void attachEntity(Entity entity){
+    void attach(SceneObject entity){
         entity.isAttachedToScene = true;
-        scene.callMethod("add", [entity.entityMesh]);
+        scene.callMethod("add", [entity.sceneAttachment]);
         attachedEntities.add(entity);
     }
 
-    void detachEntity(Entity entity){
+    void detach(SceneObject entity){
         entity.isAttachedToScene = false;
-        scene.callMethod("remove", [entity.entityMesh]);
+        scene.callMethod("remove", [entity.sceneAttachment]);
         attachedEntities.remove(entity);
     }
 
     void tick(num delta){
-        for(Entity entity in attachedEntities){
+        for(SceneObject entity in attachedEntities){
             entity.tick(delta);
         }
     }
 
-    List<Entity> getEntitiesBelowPlayer(){
-        List<Entity> entitiesBelowPlayer = new List<Entity>();
-        double playerPos = MathUtils.roundTo(player.entityMesh["position"]["y"] - (player.playerHeight/2), 100.0);
-        for(Entity e in attachedEntities){
-            if(!(e is Player) && MathUtils.roundTo(e.entityMesh["geometry"]["boundingBox"]["max"]["y"], 100.0) <= playerPos){
+    List<SceneObject> getEntitiesBelowPlayer(){
+        List<SceneObject> entitiesBelowPlayer = new List<SceneObject>();
+        double playerPos = MathUtils.roundTo(game.player.sceneAttachment["position"]["y"] - game.player.playerWidth, 100.0);
+        for(SceneObject e in attachedEntities){
+            if(!(e is Player || e is Light) && MathUtils.roundTo(e.sceneAttachment["geometry"]["boundingBox"]["max"]["y"], 100.0) <= playerPos){
                 entitiesBelowPlayer.add(e);
             }
         }
         return entitiesBelowPlayer;
     }
 
-    List<JsObject> getEntityMeshes(List<Entity> entities){
+    List<JsObject> getEntityMeshes(List<SceneObject> entities){
         List<JsObject> objects = new List<JsObject>();
-        for(Entity e in entities){
-            objects.add(e.entityMesh);
+        for(SceneObject e in entities){
+            objects.add(e.sceneAttachment);
         }
         return objects;
     }

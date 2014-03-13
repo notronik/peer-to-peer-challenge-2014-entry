@@ -1,4 +1,4 @@
-part of p2pentry;
+part of game;
 
 class Game {
 
@@ -21,14 +21,20 @@ class Game {
 
         player = new Player(this, canvas, position: new Vector3(0.0, 2.0, 2.0));
 
-        world = new World(this, player);
-        world.attachEntity(new PlaneEntity());
-        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.0, 0.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.9, 0.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 11.8, 0.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.0, -1.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.9, -1.0)));
-        world.attachEntity(new CrateEntity(position: new Vector3(0.0, 10.0, -2.0)));
+        world = new World(this);
+        // Lights first
+        world.attach(new AmbientLight(0xdddddd));
+
+        // Player
+        world.attach(player);
+        // Level
+        world.attach(new PlaneEntity());
+        world.attach(new CrateEntity(position: new Vector3(0.0, 10.0, 0.0)));
+        world.attach(new CrateEntity(position: new Vector3(0.0, 10.9, 0.0)));
+        world.attach(new CrateEntity(position: new Vector3(0.0, 11.8, 0.0)));
+        world.attach(new CrateEntity(position: new Vector3(0.0, 10.0, -1.0)));
+        world.attach(new CrateEntity(position: new Vector3(0.0, 10.9, -1.0)));
+        world.attach(new CrateEntity(position: new Vector3(0.0, 10.0, -2.0)));
 
         renderer = new JsObject(context["THREE"]["WebGLRenderer"], [new JsObject.jsify({"canvas":canvas})]);
 
