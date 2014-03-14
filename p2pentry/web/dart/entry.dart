@@ -6,18 +6,18 @@ import "dart:js";
 import "dart:math" as Math;
 import "package:vector_math/vector_math.dart";
 
-part "Game.dart";
-part "MathUtils.dart";
+part "game.dart";
+part "math_utils.dart";
 
-part "world/World.dart";
-part "world/SceneObject.dart";
-part "world/entity/PhysicsEntity.dart";
-part "world/entity/world_entities/CrateEntity.dart";
-part "world/entity/world_entities/PlaneEntity.dart";
-part "world/light/Light.dart";
-part "world/light/world_lights/AmbientLight.dart";
+part "world/world.dart";
+part "world/scene_object.dart";
+part "world/entity/physics_entity.dart";
+part "world/entity/world_entities/crate_entity.dart";
+part "world/entity/world_entities/plane_entity.dart";
+part "world/light/light.dart";
+part "world/light/world_lights/ambient_light.dart";
 
-part "player/Player.dart";
+part "player/player.dart";
 
 void main() {
     Game g = new Game();
