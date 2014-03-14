@@ -23,10 +23,12 @@ class Game {
 
         world = new World(this);
         // Lights first
-        world.attach(new AmbientLight(0xdddddd));
+        world.attach(new AmbientLight(0x7f7f7f));
+        world.attach(new DirectionalLight(0xddddddd, position: new Vector3(10.0, 7.0, -2.0).normalize() * 110.0));
 
         // Player
         world.attach(player);
+
         // Level
         world.attach(new PlaneEntity());
         world.attach(new CrateEntity(position: new Vector3(0.0, 10.0, 0.0)));
@@ -36,7 +38,9 @@ class Game {
         world.attach(new CrateEntity(position: new Vector3(0.0, 10.9, -1.0)));
         world.attach(new CrateEntity(position: new Vector3(0.0, 10.0, -2.0)));
 
-        renderer = new JsObject(context["THREE"]["WebGLRenderer"], [new JsObject.jsify({"canvas":canvas})]);
+        renderer = new JsObject(context["THREE"]["WebGLRenderer"], [new JsObject.jsify({"canvas":canvas, "antialias":true})]);
+        renderer["shadowMapEnabled"] = true;
+        renderer["shadowMapType"] = context["THREE"]["PCFSoftShadowMap"];
 
         initialiseTimers();
     }

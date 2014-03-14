@@ -1,6 +1,6 @@
 part of game;
 
-class Player extends PhysicsEntity {
+class Player extends PhysicsEntity with ShadowMixin {
 
     /*
      * Just because I keep forgetting:
@@ -73,8 +73,6 @@ class Player extends PhysicsEntity {
 
     Player(Game game, CanvasElement canvas, {Vector3 position, Vector3 rotation}) : super(position, rotation){
         this.game = game;
-        if(position != null) this.position = position;
-        if(rotation != null) this.rotation = rotation;
         this.canvas = canvas;
 
         camera = new JsObject(context["THREE"]["PerspectiveCamera"], [Player.FOV, canvas.width / canvas.height, Player.ZNEAR, Player.ZFAR]);
@@ -90,12 +88,17 @@ class Player extends PhysicsEntity {
             canvas.requestPointerLock();
         });
         postConstructor();
+        this.enableShadows(this.sceneAttachment);
     }
 
     void setupPhysics(){
         JsObject geometry = new JsObject(context["THREE"]["SphereGeometry"], [playerWidth, 60, 60]);
         JsObject material = context["Physijs"].callMethod("createMaterial", [
-            new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject.jsify({"color" : 0xff00ff, "ambient" : 0xff00ff})]),
+            new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject.jsify({
+                "color" : 0xffffff,
+                "ambient" : 0xffffff,
+                "map": context["THREE"]["ImageUtils"].callMethod("loadTexture", ["res/player.png"])
+            })]),
             playerFriction,
             playerRestitution
         ]);
@@ -198,7 +201,7 @@ class Player extends PhysicsEntity {
         rotation.x += deltaMouse.y * mouseSensitivity;
         rotation.y += deltaMouse.x * mouseSensitivity;
         rotation.y = cclamp(rotation.y);
-        rotation.x = rotation.x.clamp(-90.0, 90.0);
+        rotation.x = rotation.x.clamp(-89.9, 89.9);
     }
 
     void updateCamera(){
