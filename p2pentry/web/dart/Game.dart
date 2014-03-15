@@ -19,7 +19,7 @@ class Game {
 
         canvas = querySelector("#game");
 
-        player = new Player(this, canvas, position: new Vector3(0.0, 2.0, 2.0));
+        player = new Player(this, canvas, position: new Vector3(0.0, 200.0, 2.0));
 
         world = new World(this);
         // Lights first
@@ -31,6 +31,11 @@ class Game {
 
         // Level
         world.attach(new PlaneEntity());
+        world.attach(new PipeEntity([
+            new Vector3(0.0, 0.0, 30.0),
+            new Vector3(0.0, 20.0, 60.0),
+            new Vector3(0.0, 40.0, 80.0),
+        ], 5, radiusSegments:12));
         world.attach(new CrateEntity(position: new Vector3(0.0, 10.0, 0.0)));
         world.attach(new CrateEntity(position: new Vector3(0.0, 10.9, 0.0)));
         world.attach(new CrateEntity(position: new Vector3(0.0, 11.8, 0.0)));

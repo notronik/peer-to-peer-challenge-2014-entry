@@ -14,6 +14,7 @@ part "world/scene_object.dart";
 part "world/entity/physics_entity.dart";
 part "world/entity/world_entities/crate_entity.dart";
 part "world/entity/world_entities/plane_entity.dart";
+part "world/entity/world_entities/pipe_entity.dart";
 part "world/light/light.dart";
 part "world/light/world_lights/ambient_light.dart";
 part "world/light/world_lights/directional_light.dart";

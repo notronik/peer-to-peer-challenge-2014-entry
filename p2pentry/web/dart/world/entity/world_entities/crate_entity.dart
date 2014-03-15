@@ -11,7 +11,7 @@ class CrateEntity extends PhysicsEntity with ShadowMixin {
                     "map": context["THREE"]["ImageUtils"].callMethod("loadTexture", ["res/crate.png"])
                 }
         )])]), 1.0, 0.0]);
-        this.sceneAttachment = new JsObject(context["Physijs"]["BoxMesh"], [geometry, material, 90.0]);
+        this.sceneAttachment = new JsObject(context["Physijs"]["BoxMesh"], [geometry, material, 2.0]);
         postConstructor();
         enableShadows(this.sceneAttachment);
     }

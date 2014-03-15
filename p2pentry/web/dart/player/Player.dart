@@ -248,8 +248,9 @@ class Player extends PhysicsEntity with ShadowMixin {
         JsArray result = raycaster.callMethod("intersectObjects", [objects, false]);
         if(result.length > 0){
             double distance = MathUtils.roundTo(result.elementAt(0)["distance"] - playerWidth, 100.0);
-            lastOnGround = distance == 0.0;
-            return distance == 0.0;
+            bool wonGround = distance <= 0.16;
+            lastOnGround = wonGround;
+            return wonGround;
         }else{
             lastOnGround = false;
             return false;

@@ -33,8 +33,10 @@ class World {
         List<SceneObject> entitiesBelowPlayer = new List<SceneObject>();
         double playerPos = MathUtils.roundTo(game.player.sceneAttachment["position"]["y"].toDouble() - game.player.playerWidth, 100.0);
         for(SceneObject e in attachedEntities){
-            if(!(e is Player || e is Light) && MathUtils.roundTo(e.sceneAttachment["geometry"]["boundingBox"]["max"]["y"].toDouble(), 100.0) <= playerPos){
-                entitiesBelowPlayer.add(e);
+            if(e != null && !(e is Player || e is Light)){
+                if(MathUtils.roundTo(e.sceneAttachment["geometry"]["boundingBox"]["min"]["y"].toDouble(), 100.0) <= playerPos){
+                    entitiesBelowPlayer.add(e);
+                }
             }
         }
         return entitiesBelowPlayer;
