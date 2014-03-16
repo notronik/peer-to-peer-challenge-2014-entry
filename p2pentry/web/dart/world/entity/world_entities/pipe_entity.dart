@@ -1,6 +1,6 @@
 part of game;
 
-class PipeEntity extends SceneObject with ShadowMixin {
+class PipeEntity extends PhysicsEntity with ShadowMixin {
     List<Vector3> points;
     num radius, segments, radiusSegments;
     bool closed, debug;

@@ -186,15 +186,15 @@ class Player extends PhysicsEntity with ShadowMixin {
     void physTick(){
         updateCamera();
         // Limit speed of walking
-        JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
-        Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
-
-        double linearSpeed = linearVelocity.xz.length;
-        if(linearSpeed > playerWalkSpeed){
-            linearVelocity.x *= playerWalkSpeed / linearSpeed;
-            linearVelocity.z *= playerWalkSpeed / linearSpeed;
-            this.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
-        }
+//        JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
+//        Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
+//
+//        double linearSpeed = linearVelocity.xz.length;
+//        if(linearSpeed > playerWalkSpeed){
+//            linearVelocity.x *= playerWalkSpeed / linearSpeed;
+//            linearVelocity.z *= playerWalkSpeed / linearSpeed;
+//            this.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
+//        }
     }
 
     void look(){
@@ -248,7 +248,7 @@ class Player extends PhysicsEntity with ShadowMixin {
         JsArray result = raycaster.callMethod("intersectObjects", [objects, false]);
         if(result.length > 0){
             double distance = MathUtils.roundTo(result.elementAt(0)["distance"] - playerWidth, 100.0);
-            bool wonGround = distance <= 0.16;
+            bool wonGround = distance <= 0.25;
             lastOnGround = wonGround;
             return wonGround;
         }else{

@@ -1,0 +1,104 @@
+{
+    "player" : {
+        "start" : {
+            "position" : {
+                "x" : 0.0, "y" : 100.0, "z" : 2.0
+            }
+        },
+        "finish" : {
+            "position" : {
+                "x" : 0.0, "y" : 0.0, "z" : 0.0
+            },
+            "registration_radius" : 5
+        }
+    },
+    "lights" : [
+        {
+            "type" : "ambient",
+            "positional_arguments" : [
+                8355711
+            ]
+        },
+        {
+            "type" : "directional",
+            "positional_arguments" : [
+                14540253
+            ],
+            "named_arguments" : {
+                "position" : {
+                    "x" : 88.92972564697266,
+                    "y" : 62.25081253051758,
+                    "z" : -17.785945892333984
+                }
+            }
+        }
+    ],
+    "entities" : [
+        {
+            "type" : "crate",
+            "named_arguments" : {
+                "position" : {
+                    "x" : 0.0, "y" : 10.0, "z" : 0.0
+                }
+            }
+        },
+        {
+            "type" : "crate",
+            "named_arguments" : {
+                "position" : {
+                    "x" : 0.0, "y" : 10.9, "z" : 0.0
+                }
+            }
+        },
+        {
+            "type" : "crate",
+            "named_arguments" : {
+                "position" : {
+                    "x" : 0.0, "y" : 11.8, "z" : 0.0
+                }
+            }
+        },
+        {
+            "type" : "crate",
+            "named_arguments" : {
+                "position" : {
+                    "x" : 0.0, "y" : 10.0, "z" : -1.0
+                }
+            }
+        },
+        {
+            "type" : "crate",
+            "named_arguments" : {
+                "position" : {
+                    "x" : 0.0, "y" : 10.9, "z" : -1.0
+                }
+            }
+        },
+        {
+            "type" : "crate",
+            "named_arguments" : {
+                "position" : {
+                    "x" : 0.0, "y" : 10.0, "z" : -2.0
+                }
+            }
+        },
+        {
+            "type" : "plane"
+        },
+        {
+            "type" : "pipe",
+            "positional_arguments" : [
+                [
+                    {"x" : 0.0, "y" : 0.0, "z" : 30.0},
+                    {"x" : 0.0, "y" : 20.0, "z" : 60.0},
+                    {"x" : 0.0, "y" : 40.0, "z" : 80.0}
+                ],
+                5.0
+            ],
+            "named_arguments" : {
+                "radius_segments" : 18.0,
+                "debug" : false
+            }
+        }
+    ]
+}
