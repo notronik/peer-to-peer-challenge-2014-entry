@@ -34,8 +34,9 @@ class LevelLoader {
     }
 
     void __parsePlayer(dynamic json){
-        game.player.sceneAttachment["position"].callMethod("set", [json["start"]["position"]["x"].toDouble(), json["start"]["position"]["y"].toDouble(), json["start"]["position"]["z"].toDouble()]);
-        game.player.sceneAttachment["__dirtyPosition"] = true;
+        game.world.lastStart = new Vector3(json["start"]["position"]["x"].toDouble(), json["start"]["position"]["y"].toDouble(), json["start"]["position"]["z"].toDouble());
+        game.world.lastFinish = new Vector3(json["finish"]["position"]["x"].toDouble(), json["finish"]["position"]["y"].toDouble(), json["finish"]["position"]["z"].toDouble());
+        game.player.teleport(game.world.lastStart);
     }
 
     void __parseSceneObjects(dynamic json, String classIdentifier){

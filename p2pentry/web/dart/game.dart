@@ -29,8 +29,7 @@ class Game {
         renderer["shadowMapEnabled"] = true;
         renderer["shadowMapType"] = context["THREE"]["PCFSoftShadowMap"];
 
-        initialiseTimers();
-        levelLoader.load("res/levels/level1.json", (success) => print("callback was $success"));
+        levelLoader.load("res/levels/level1.json", (success) => success ? initialiseTimers() : print("Game not started because level failed to load"));
     }
 
     void render(num delta){

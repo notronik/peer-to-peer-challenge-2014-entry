@@ -6,6 +6,8 @@ class World {
     JsObject scene;
     List<SceneObject> attachedEntities = new List<SceneObject>();
 
+    Vector3 lastStart = new Vector3.all(0.0), lastFinish = new Vector3.all(0.0);
+
     World(Game this.game){
         scene = new JsObject(context["Physijs"]["Scene"]);
         scene.callMethod("addEventListener", ["update", new JsFunction.withThis((a) => game.player.physTick())]);

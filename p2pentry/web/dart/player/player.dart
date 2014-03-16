@@ -68,6 +68,10 @@ class Player extends PhysicsEntity with ShadowMixin {
         "fly_down" : {
             "key" : KeyCode.E,
             "down" : false,
+        },
+        "reset" : {
+            "key" : KeyCode.ENTER,
+            "down" : false,
         }
     };
 
@@ -139,6 +143,7 @@ class Player extends PhysicsEntity with ShadowMixin {
 
     void tick(num delta){
         walk(delta);
+        if(keybindings["reset"]["down"] == true) teleport(game.world.lastStart);
     }
 
     void walk(num delta){
@@ -259,5 +264,10 @@ class Player extends PhysicsEntity with ShadowMixin {
 
     num calculateVelocityFromTime(num time){
         return Math.pow(time, 2) * 60;
+    }
+
+    void teleport(Vector3 newLocation){
+        this.sceneAttachment["position"].callMethod("set", [newLocation.x, newLocation.y, newLocation.z]);
+        this.sceneAttachment["__dirtyPosition"] = true;
     }
 }
