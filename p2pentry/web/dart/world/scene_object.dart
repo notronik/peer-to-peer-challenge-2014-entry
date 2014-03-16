@@ -11,6 +11,8 @@ abstract class SceneObject {
         if(rotation != null) this.rotation = rotation;
     }
 
+    SceneObject.fromArray(List<dynamic> positional, Map<Symbol, dynamic> named) : this(named[new Symbol("position")], named[new Symbol("rotation")]);
+
     void postConstructor(){
         updatePosition();
         updateRotation();

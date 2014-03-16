@@ -6,7 +6,16 @@ class DirectionalLight extends Light {
 
     DirectionalLight(num color, {num intensity: 1.0, Vector3 position}) : super (position, null, color){
         this.__intensity = intensity;
-        this.sceneAttachment = new JsObject(context["THREE"]["DirectionalLight"], [color, intensity]);
+        init();
+    }
+
+    DirectionalLight.fromArray(List<dynamic> positional, Map<Symbol, dynamic> named) : super.fromArray(positional, named){
+        if(named[new Symbol("intensity")] != null) this.__intensity = named[new Symbol("intensity")];
+        init();
+    }
+
+    void init(){
+        this.sceneAttachment = new JsObject(context["THREE"]["DirectionalLight"], [this.color, this.intensity]);
         this.sceneAttachment["castShadow"] = true;
         num size = 70.0, mapDims = Math.pow(2.0, 13);
         this.sceneAttachment["shadowCameraRight"] = size;

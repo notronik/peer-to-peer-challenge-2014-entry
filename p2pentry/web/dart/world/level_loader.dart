@@ -39,12 +39,9 @@ class LevelLoader {
     }
 
     void __parseSceneObjects(dynamic json, String classIdentifier){
-        MirrorSystem mirrors = currentMirrorSystem();
-        LibraryMirror library = mirrors.findLibrary(new Symbol("game"));
         for(dynamic d in json){
             String type = d["type"].toString();
             String correctedType = type.replaceFirst(new RegExp("[a-z]{1}"), type.substring(0, 1).toUpperCase()) + classIdentifier;
-            ClassMirror clazz = library.declarations[new Symbol(correctedType)];
 
             List<dynamic> positionalArguments = new List<dynamic>();
             Map<Symbol, dynamic> namedArguments = new Map<Symbol, dynamic>();
@@ -84,8 +81,32 @@ class LevelLoader {
                 });
             }
 
-            InstanceMirror iclazz = clazz.newInstance(new Symbol(""), positionalArguments, namedArguments);
-            game.world.attach(iclazz.reflectee);
+            dynamic attachment;
+
+            switch(correctedType){
+                case "AmbientLight": {
+                    attachment = new AmbientLight.fromArray(positionalArguments, namedArguments);
+                }
+                    break;
+                case "DirectionalLight": {
+                    attachment = new DirectionalLight.fromArray(positionalArguments, namedArguments);
+                }
+                    break;
+                case "CrateEntity": {
+                    attachment = new CrateEntity.fromArray(positionalArguments, namedArguments);
+                }
+                    break;
+                case "PlaneEntity": {
+                    attachment = new PlaneEntity.fromArray(positionalArguments, namedArguments);
+                }
+                    break;
+                case "PipeEntity": {
+                    attachment = new PipeEntity.fromArray(positionalArguments, namedArguments);
+                }
+                    break;
+            }
+
+            game.world.attach(attachment);
         }
     }
 

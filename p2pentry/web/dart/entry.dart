@@ -5,7 +5,6 @@ import "dart:async";
 import "dart:js";
 import "dart:math" as Math;
 import "dart:convert";
-import "dart:mirrors";
 import "package:vector_math/vector_math.dart";
 
 part "game.dart";

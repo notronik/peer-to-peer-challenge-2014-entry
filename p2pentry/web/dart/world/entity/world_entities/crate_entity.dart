@@ -4,6 +4,15 @@ class CrateEntity extends PhysicsEntity with ShadowMixin {
     Vector3 size = new Vector3.all(1.0);
     CrateEntity({Vector3 position, Vector3 rotation, Vector3 size}) : super(position, rotation) {
         if(size != null) this.size = size;
+        init();
+    }
+
+    CrateEntity.fromArray(List<dynamic> positional, Map<Symbol, dynamic> named) : super.fromArray(positional, named) {
+        if(named[new Symbol("size")] != null) this.size = named[new Symbol("size")];
+        init();
+    }
+
+    void init(){
         JsObject geometry = new JsObject(context["THREE"]["CubeGeometry"], [this.size.x, this.size.y, this.size.z]);
         JsObject material = context["Physijs"].callMethod("createMaterial", [new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject(context["THREE"]["MeshBasicMaterial"], [new JsObject.jsify(
                 {
