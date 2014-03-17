@@ -27,8 +27,17 @@ class PipeEntity extends PhysicsEntity with ShadowMixin {
         }
         this.spline = new JsObject(context["THREE"]["SplineCurve3"], [new JsArray.from(jpoints)]);
         JsObject geometry = new JsObject(context["THREE"]["TubeGeometry"], [this.spline, segments, radius, radiusSegments, closed, debug]);
-        JsObject material = context["Physijs"].callMethod("createMaterial", [new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject.jsify({"color":0x9540f3, "ambient":0x9540f3, "side":context["THREE"]["BackSide"]})]), 1.0, 0.0]);
-        this.sceneAttachment =  new JsObject(context["Physijs"]["ConcaveMesh"], [geometry, material, 0.0]);
+        JsObject material = context["Physijs"].callMethod("createMaterial", [new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject.jsify({"color":0x9540f3, "ambient":0x9540f3, "vertexColors" : context["THREE"]["FaceColors"], "side":context["THREE"]["BackSide"]})]), 1.0, 0.0]);
+        this.sceneAttachment = new JsObject(context["Physijs"]["ConcaveMesh"], [geometry, material, 0.0]);
+
+        JsArray faces = this.sceneAttachment["geometry"]["faces"];
+        for(int i = 0; i < faces.length; i++){
+            faces[i]["color"].callMethod("setHex", [0xff0000]);
+        }
+        this.sceneAttachment["geometry"]["faces"] = faces;
+        this.sceneAttachment["geometry"]["elementsNeedUpdate"] = true;
+        this.sceneAttachment["geometry"]["colorsNeedUpdate"] = true;
+
         postConstructor();
         enableShadows(this.sceneAttachment, receive: true, cast: false);
     }

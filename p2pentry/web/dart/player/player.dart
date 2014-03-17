@@ -21,7 +21,7 @@ class Player extends PhysicsEntity with ShadowMixin {
     static const double FOV = 80.0;
     static const double ZNEAR = 0.001;
     static const double ZFAR = 10000.0;
-    double playerWalkSpeed = 8.0;
+    double playerWalkSpeed = 15.0;
     double playerForceSpeed = 900.0;
     double playerJumpSpeed = 35.0;
     double mouseSensitivity = 0.35;
@@ -178,10 +178,10 @@ class Player extends PhysicsEntity with ShadowMixin {
             change.y = 0.0;
         }
         if(keybindings["fly_up"]["down"] == true){
-            change.y += 1;
+            change.y += 6;
         }
         if(keybindings["fly_down"]["down"] == true){
-            change.y -= 1;
+            change.y -= 6;
         }
         walking = !(change.x == 0.0 && change.z == 0.0);
 
@@ -191,15 +191,15 @@ class Player extends PhysicsEntity with ShadowMixin {
     void physTick(){
         updateCamera();
         // Limit speed of walking
-//        JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
-//        Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
-//
-//        double linearSpeed = linearVelocity.xz.length;
-//        if(linearSpeed > playerWalkSpeed){
-//            linearVelocity.x *= playerWalkSpeed / linearSpeed;
-//            linearVelocity.z *= playerWalkSpeed / linearSpeed;
-//            this.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
-//        }
+        JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
+        Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
+
+        double linearSpeed = linearVelocity.xz.length;
+        if(linearSpeed > playerWalkSpeed){
+            linearVelocity.x *= playerWalkSpeed / linearSpeed;
+            linearVelocity.z *= playerWalkSpeed / linearSpeed;
+            this.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linearVelocity.x, linearVelocity.y, linearVelocity.z])]);
+        }
     }
 
     void look(){
