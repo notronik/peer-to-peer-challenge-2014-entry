@@ -28,12 +28,22 @@ class PipeEntity extends PhysicsEntity with ShadowMixin {
         this.spline = new JsObject(context["THREE"]["SplineCurve3"], [new JsArray.from(jpoints)]);
         JsObject pipeGeometry = new JsObject(context["THREE"]["TubeGeometry"], [this.spline, segments, radius, radiusSegments, closed, debug]);
 
+        JsObject pipeBSP = new JsObject(context["ThreeBSP"], [pipeGeometry]);
+        JsObject sphereGeometry = new JsObject(context["THREE"]["SphereGeometry"], [6.0, 32.0, 32.0]);
+        JsObject sphereMesh = new JsObject(context["THREE"]["Mesh"], [sphereGeometry]);
+        sphereMesh["position"]["y"] = 100.0;
+        sphereMesh["position"]["x"] = 2.0;
+        sphereMesh["position"]["z"] = 2.0;
+        JsObject sphereBSP = new JsObject(context["ThreeBSP"], [sphereMesh]);
+        JsObject subtractedBSP = pipeBSP.callMethod("subtract", [sphereBSP]);
+        JsObject geometry = subtractedBSP.callMethod("toGeometry");
+
         JsObject texture = context["THREE"]["ImageUtils"].callMethod("loadTexture", ["res/pipe.png"]);
         texture["wrapS"] = context["THREE"]["MirroredRepeatWrapping"];
         texture["wrapT"] = context["THREE"]["MirroredRepeatWrapping"];
         texture["repeat"].callMethod("set", [10, 10]);
         JsObject material = context["Physijs"].callMethod("createMaterial", [new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject.jsify({"color":0xa9ca38, "ambient":0xa9ca38, "side":context["THREE"]["BackSide"], "map":texture})]), 1.0, 0.0]);
-        this.sceneAttachment = new JsObject(context["Physijs"]["ConcaveMesh"], [pipeGeometry, material, 0.0]);
+        this.sceneAttachment = new JsObject(context["Physijs"]["ConcaveMesh"], [geometry, material, 0.0]);
 
         postConstructor();
         enableShadows(this.sceneAttachment, receive: true, cast: false);
