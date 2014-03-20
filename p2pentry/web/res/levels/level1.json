@@ -105,7 +105,6 @@
                 5.0
             ],
             "named_arguments" : {
-                "radius_segments" : 18.0,
                 "debug" : false
             }
         }

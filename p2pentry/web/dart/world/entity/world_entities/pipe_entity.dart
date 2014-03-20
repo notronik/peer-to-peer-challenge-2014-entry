@@ -2,11 +2,11 @@ part of game;
 
 class PipeEntity extends PhysicsEntity with ShadowMixin {
     List<Vector3> points;
-    num radius, segments = 100, radiusSegments = 4;
+    num radius, segments = 100, radiusSegments = 20;
     bool closed = false, debug = false;
 
     JsObject spline;
-    PipeEntity(List<Vector3> this.points, num this.radius, {num this.segments: 100, num this.radiusSegments: 4, bool this.closed: false, bool this.debug: false, Vector3 position, Vector3 rotation}) : super(position, rotation){
+    PipeEntity(List<Vector3> this.points, num this.radius, {num this.segments: 100, num this.radiusSegments: 20, bool this.closed: false, bool this.debug: false, Vector3 position, Vector3 rotation}) : super(position, rotation){
         init();
     }
 
