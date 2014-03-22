@@ -42,6 +42,9 @@ class LevelLoader {
     void __parseSceneObjects(dynamic json, String classIdentifier){
         for(dynamic d in json){
             String type = d["type"].toString();
+            type = type.splitMapJoin(new RegExp("_[A-Za-z]{1}"), onMatch: (m){
+               return type.substring(m.start + 1, m.start + 2).toUpperCase();
+            });
             String correctedType = type.replaceFirst(new RegExp("[a-z]{1}"), type.substring(0, 1).toUpperCase()) + classIdentifier;
 
             List<dynamic> positionalArguments = new List<dynamic>();
@@ -105,9 +108,13 @@ class LevelLoader {
                     attachment = new PipeEntity.fromArray(positionalArguments, namedArguments);
                 }
                     break;
+                case "PerforatedPipeEntity": {
+                    attachment = new PerforatedPipeEntity.fromArray(positionalArguments, namedArguments);
+                }
+                    break;
             }
 
-            game.world.attach(attachment);
+            attachment.isReady(() => game.world.attach(attachment));
         }
     }
 

@@ -19,6 +19,7 @@ class PlaneEntity extends PhysicsEntity with ShadowMixin {
         this.sceneAttachment = new JsObject(context["Physijs"]["BoxMesh"], [geometry, material, 0]);
         postConstructor();
         enableShadows(this.sceneAttachment, cast:false);
+        makeReady();
     }
 
     // Overridden

@@ -189,7 +189,8 @@ class Player extends PhysicsEntity with ShadowMixin {
     }
 
     void physTick(){
-        updateCamera();
+        updateManualCamera();
+        camera.callMethod("lookAt", [sceneAttachment["position"]]);
         // Limit speed of walking
         JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
         Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
@@ -209,7 +210,7 @@ class Player extends PhysicsEntity with ShadowMixin {
         rotation.x = rotation.x.clamp(-89.9, 89.9);
     }
 
-    void updateCamera(){
+    void updateManualCamera(){
         JsObject entityPos = sceneAttachment["position"];
         Vector3 workPos = position;
         workPos.x = 0.0;
@@ -229,7 +230,10 @@ class Player extends PhysicsEntity with ShadowMixin {
         camera["position"]["x"] = position.x;
         camera["position"]["y"] = position.y;
         camera["position"]["z"] = position.z;
-        camera.callMethod("lookAt", [sceneAttachment["position"]]);
+    }
+
+    void updateRailCamera(){
+
     }
 
     double cclamp(double val){

@@ -27,6 +27,7 @@ class DirectionalLight extends Light {
         this.sceneAttachment["shadowMapHeight"] = mapDims;
 //        this.sceneAttachment["shadowCameraVisible"] = true;
         postConstructor();
+        makeReady();
     }
 
     num get intensity {

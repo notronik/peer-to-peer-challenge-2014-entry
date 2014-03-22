@@ -27,7 +27,6 @@ class PipeEntity extends PhysicsEntity with ShadowMixin {
         }
         this.spline = new JsObject(context["THREE"]["SplineCurve3"], [new JsArray.from(jpoints)]);
         JsObject pipeGeometry = new JsObject(context["THREE"]["TubeGeometry"], [this.spline, segments, radius, radiusSegments, closed, debug]);
-
         JsObject texture = context["THREE"]["ImageUtils"].callMethod("loadTexture", ["res/pipe.png"]);
         texture["wrapS"] = context["THREE"]["MirroredRepeatWrapping"];
         texture["wrapT"] = context["THREE"]["MirroredRepeatWrapping"];
@@ -37,6 +36,7 @@ class PipeEntity extends PhysicsEntity with ShadowMixin {
 
         postConstructor();
         enableShadows(this.sceneAttachment, receive: true, cast: false);
+        makeReady();
     }
 
     void tick(num delta){}

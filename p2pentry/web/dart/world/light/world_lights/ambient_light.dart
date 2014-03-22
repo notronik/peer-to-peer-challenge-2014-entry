@@ -11,6 +11,7 @@ class AmbientLight extends Light {
 
     void init(){
         this.sceneAttachment = new JsObject(context["THREE"]["AmbientLight"], [this.color]);
+        makeReady();
     }
 
     void tick(num delta){}

@@ -2,6 +2,9 @@ part of game;
 
 abstract class SceneObject {
 
+    bool ready = false;
+    List<Function> readinessCallbacks = new List<Function>();
+
     Vector3 position = new Vector3.all(0.0), rotation = new Vector3.all(0.0);
     JsObject sceneAttachment;
     bool isAttachedToScene = false;
@@ -28,6 +31,27 @@ abstract class SceneObject {
         sceneAttachment["rotation"]["x"] = radians(rotation.x);
         sceneAttachment["rotation"]["y"] = radians(rotation.y);
         sceneAttachment["rotation"]["z"] = radians(rotation.z);
+    }
+
+    void makeReady(){
+        ready = true;
+        evaluateReadinessCallbacks();
+    }
+
+    void isReady(Function callback){
+        if(!ready) readinessCallbacks.add(callback);
+        else{
+            callback();
+        }
+    }
+
+    void evaluateReadinessCallbacks(){
+        if(ready){
+            for(Function f in readinessCallbacks){
+                f();
+            }
+            readinessCallbacks.clear();
+        }
     }
 
     void tick(num delta);
