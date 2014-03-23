@@ -17,6 +17,7 @@ class Player extends PhysicsEntity with ShadowMixin {
 
     CanvasElement canvas;
     JsObject camera;
+    JsObject cameraRail;
 
     static const double FOV = 80.0;
     static const double ZNEAR = 0.001;
@@ -189,7 +190,8 @@ class Player extends PhysicsEntity with ShadowMixin {
     }
 
     void physTick(){
-        updateManualCamera();
+//        updateManualCamera();
+        updateRailCamera();
         camera.callMethod("lookAt", [sceneAttachment["position"]]);
         // Limit speed of walking
         JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
@@ -232,8 +234,21 @@ class Player extends PhysicsEntity with ShadowMixin {
         camera["position"]["z"] = position.z;
     }
 
+    double dpoint = 0.0;
+    Vector3 lastPosition = new Vector3.all(0.0);
     void updateRailCamera(){
+        JsObject linvel = this.sceneAttachment.callMethod("getLinearVelocity");
+        Vector3 currentPosition = new Vector3(sceneAttachment["position"]["x"].toDouble(), sceneAttachment["position"]["y"].toDouble(), sceneAttachment["position"]["z"].toDouble());
+        Vector3 deltaPosition = currentPosition - lastPosition;
+        lastPosition = currentPosition;
 
+        double velocity = deltaPosition.length;
+        double length = cameraRail.callMethod("getLength");
+        double deltadpoint = velocity / length;
+        dpoint += deltadpoint;
+        print("$dpoint");
+//        JsObject point = cameraRail.callMethod("getPointAt", [dpoint]);
+//        camera["position"] = point;
     }
 
     double cclamp(double val){
