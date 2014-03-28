@@ -10,6 +10,14 @@ import "package:vector_math/vector_math.dart";
 part "game.dart";
 part "math_utils.dart";
 
+// Entity Component System
+part "entity_component_system/csentity.dart";
+part "entity_component_system/entity_component.dart";
+part "entity_component_system/entity_notifications.dart";
+part "entity_component_system/entity_factory.dart";
+part "entity_component_system/components/player/player_input_component.dart";
+part "entity_component_system/components/player/player_physics_component.dart";
+
 part "world/level_loader.dart";
 part "world/world.dart";
 part "world/scene_object.dart";
