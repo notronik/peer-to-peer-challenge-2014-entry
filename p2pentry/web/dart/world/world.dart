@@ -10,7 +10,7 @@ class World {
 
     World(Game this.game){
         scene = new JsObject(context["Physijs"]["Scene"]);
-        scene.callMethod("addEventListener", ["update", new JsFunction.withThis((a) => game.player.physTick())]);
+        scene.callMethod("addEventListener", ["update", new JsFunction.withThis((a) => game.player.notify(EntityNotifications.NF_PLAYER_PHYSICS_TICK, null))]);
     }
 
     void attach(SceneObject entity){
@@ -18,6 +18,10 @@ class World {
         scene.callMethod("add", [entity.sceneAttachment]);
         attachedEntities.add(entity);
     }
+
+    void attachW(CSEntity entity){
+            scene.callMethod("add", [entity.sceneAttachment]);
+        }
 
     void detach(SceneObject entity){
         entity.isAttachedToScene = false;
@@ -29,19 +33,6 @@ class World {
         for(SceneObject entity in attachedEntities){
             entity.tick(delta);
         }
-    }
-
-    List<SceneObject> getEntitiesBelowPlayer(){
-        List<SceneObject> entitiesBelowPlayer = new List<SceneObject>();
-        double playerPos = MathUtils.roundTo(game.player.sceneAttachment["position"]["y"].toDouble() - game.player.playerWidth, 100.0);
-        for(SceneObject e in attachedEntities){
-            if(e != null && !(e is Player || e is Light)){
-                if(MathUtils.roundTo(e.sceneAttachment["geometry"]["boundingBox"]["min"]["y"].toDouble(), 100.0) <= playerPos){
-                    entitiesBelowPlayer.add(e);
-                }
-            }
-        }
-        return entitiesBelowPlayer;
     }
 
     List<JsObject> getEntityMeshes(List<SceneObject> entities){

@@ -14,7 +14,7 @@ class LevelLoader {
 
             __parsePlayer(json["player"]);
             __parseSceneObjects(json["lights"], "Light");
-            game.world.attach(game.player);
+            game.world.attachW(game.player);
             __parseSceneObjects(json["entities"], "Entity");
 
             if(callback!=null) callback(true);
@@ -43,7 +43,7 @@ class LevelLoader {
             Vector3 p = __parseVector(o);
             jpoints.add(new JsObject(context["THREE"]["Vector3"], [p.x, p.y, p.z]));
         }
-        game.player.cameraRail = new JsObject(context["THREE"]["SplineCurve3"], [new JsArray.from(jpoints)]);
+        game.player.notify(EntityNotifications.NF_PLAYER_CAMERA_RAIL, new JsObject(context["THREE"]["SplineCurve3"], [new JsArray.from(jpoints)]));
     }
 
     void __parseSceneObjects(dynamic json, String classIdentifier){

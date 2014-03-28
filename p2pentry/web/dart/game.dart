@@ -2,17 +2,21 @@ part of game;
 
 class Game {
 
+    static Game _game;
+
     JsObject renderer;
     CanvasElement canvas;
 
     LevelLoader levelLoader;
     World world;
-    Player player;
+    CSEntity player;
+    JsObject playerCamera;
 
     Timer tickTimer;
     DateTime tickTimerTime;
 
     Game(){
+        _game = this;
         // * PHYSIJS SETUP * //
         context["Physijs"]["scripts"]["worker"] = "js/physijs_worker.js";
         context["Physijs"]["scripts"]["ammo"] = "ammo.small.js";
@@ -21,7 +25,8 @@ class Game {
         canvas = querySelector("#game");
         levelLoader = new LevelLoader(this);
 
-        player = new Player(this, canvas, position: new Vector3(0.0, 200.0, 2.0));
+        player = EntityFactory.createPlayer(position: new Vector3(0.0, 200.0, 2.0));
+        playerCamera = player.getify(EntityNotifications.GF_CAMERA);
 
         world = new World(this);
 
@@ -34,7 +39,7 @@ class Game {
 
     void render(num delta){
         world.scene.callMethod("simulate");
-        renderer.callMethod("render", [world.scene, player.camera]);
+        renderer.callMethod("render", [world.scene, playerCamera]);
         window.animationFrame.then(render, onError:timerError);
     }
 

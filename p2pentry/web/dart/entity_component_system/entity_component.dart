@@ -1,10 +1,10 @@
 part of game;
 
-abstract class EntityComponent extends EntityNotifications {
+abstract class EntityComponent {
 
     CSEntity entity;
     String componentID;
-    Map<int, Function> nf = new Map<int, Function>();
+    Map<int, Function> nf = new Map<int, Function>(), gf = new Map<int, Function>();
 
     // The constructor is to feed variables, the factory sorts these out.
     void _init(CSEntity entity){ // This function initialises any component-specific timers, etc.
@@ -20,8 +20,16 @@ abstract class EntityComponent extends EntityNotifications {
         entity.notify(event, payload);
     }
 
+    dynamic getify(int event){
+        return entity.getify(event);
+    }
+
     void receiveNotification(int event, dynamic payload){
         nf[event](event, payload);
+    }
+
+    dynamic receiveGetification(int event){
+        return gf[event](event);
     }
 
 }
