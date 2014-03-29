@@ -49,11 +49,17 @@ class CSEntity {
     void set position(Vector3 newPosition) {
         notify(EntityNotifications.NF_POSITION_UPDATE, newPosition);
         this._position = newPosition;
+
+        this.sceneAttachment["position"].callMethod("set", [newPosition.x, newPosition.y, newPosition.z]);
+        this.sceneAttachment["__dirtyPosition"] = true;
     }
 
     void set rotation(Vector3 newRotation) {
         notify(EntityNotifications.NF_ROTATION_UPDATE, newRotation);
         this._rotation = newRotation;
+
+        this.sceneAttachment["rotation"].callMethod("set", [radians(newRotation.x), radians(newRotation.y), radians(newRotation.z)]);
+        this.sceneAttachment["__dirtyPosition"] = true;
     }
 
     void teleport(Vector3 newLocation){

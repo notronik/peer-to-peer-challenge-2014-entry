@@ -14,7 +14,7 @@ class CrateEntity extends PhysicsEntity with ShadowMixin {
 
     void init(){
         JsObject geometry = new JsObject(context["THREE"]["CubeGeometry"], [this.size.x, this.size.y, this.size.z]);
-        JsObject material = context["Physijs"].callMethod("createMaterial", [new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject(context["THREE"]["MeshBasicMaterial"], [new JsObject.jsify(
+        JsObject material = context["Physijs"].callMethod("createMaterial", [new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject(context["THREE"]["MeshPhongMaterial"], [new JsObject.jsify(
                 {
                     "color": 0xffffff,
                     "map": context["THREE"]["ImageUtils"].callMethod("loadTexture", ["res/crate.png"])
