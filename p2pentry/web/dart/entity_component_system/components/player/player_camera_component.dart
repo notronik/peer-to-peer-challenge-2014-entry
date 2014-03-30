@@ -30,9 +30,11 @@ class PlayerCameraComponent extends EntityComponent {
         nf[EntityNotifications.NF_PLAYER_CAMERA_POSITION_UPDATE] = positionUpdate;
         nf[EntityNotifications.NF_PLAYER_CAMERA_RAIL] = (a, b) => cameraRail = b;
         nf[EntityNotifications.NF_SET_CAMERA_ROTATION] = (a, b) => cameraRotation = b;
+        nf[EntityNotifications.NF_PLAYER_CAMERA_ZOOM_FACTOR_UPDATE] = (a, b) => zoomFactor = b;
         gf[EntityNotifications.GF_ZOOM_FACTOR] = (a) => zoomFactor;
         gf[EntityNotifications.GF_CAMERA] = (a) => camera;
         gf[EntityNotifications.GF_CAMERA_ROTATION] = (a) => cameraRotation;
+        entity.advanceComponentIntitialisation();
     }
 
     void tick(num delta){

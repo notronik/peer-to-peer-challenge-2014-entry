@@ -14,6 +14,7 @@ class EntityNotifications {
     static int NF_PLAYER_FLY_DOWN            = ++nfcounter;
     static int NF_PLAYER_RESET               = ++nfcounter;
     static int NF_PLAYER_CAMERA_UPDATE       = ++nfcounter;
+    static int NF_PLAYER_CAMERA_ZOOM_FACTOR_UPDATE = ++nfcounter;
     static int NF_PLAYER_CAMERA_POSITION_UPDATE = ++nfcounter;
     static int NF_PLAYER_MOUSE_MOVE          = ++nfcounter;
     static int NF_PLAYER_PHYSICS_TICK        = ++nfcounter;
@@ -26,4 +27,6 @@ class EntityNotifications {
     static int GF_KEYBINDINGS                = ++gfcounter;
     static int GF_CAMERA                     = ++gfcounter;
     static int GF_CAMERA_ROTATION            = ++gfcounter;
+    static int GF_GEOMETRY                   = ++gfcounter;
+    static int GF_MATERIAL                   = ++gfcounter;
 }

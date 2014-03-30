@@ -35,6 +35,7 @@ class PlayerPhysicsComponent extends EntityComponent {
         entity.sceneAttachment["geometry"].callMethod("computeBoundingBox");
 
         nf[EntityNotifications.NF_PLAYER_PHYSICS_TICK] = physTick;
+        entity.advanceComponentIntitialisation();
     }
 
     void tick(num delta){
@@ -57,7 +58,7 @@ class PlayerPhysicsComponent extends EntityComponent {
 
     void walk(num delta){
         Map<String, dynamic> keybindings = getify(EntityNotifications.GF_KEYBINDINGS);
-        if(keybindings == null) return;
+        assert(keybindings != null);
         Vector3 change = new Vector3.all(0.0);
         if(keybindings["walk_forwards"]["down"] == true){
             change.x += Math.cos(radians(entity.rotation.y - 90.0));
@@ -119,14 +120,16 @@ class PlayerPhysicsComponent extends EntityComponent {
         }
     }
 
-    List<SceneObject> getEntitiesBelowPlayer(){
-        List<SceneObject> entitiesBelowPlayer = new List<SceneObject>();
+    List<CSEntity> getEntitiesBelowPlayer(){
+        List<CSEntity> entitiesBelowPlayer = new List<CSEntity>();
         double playerPos = MathUtils.roundTo(entity.sceneAttachment["position"]["y"].toDouble() - this.playerWidth, 100.0);
-        for(SceneObject e in entity.game.world.attachedEntities){
-            if(e != null && !(e is Light)){
-                if(MathUtils.roundTo(e.sceneAttachment["geometry"]["boundingBox"]["min"]["y"].toDouble(), 100.0) <= playerPos){
-                    entitiesBelowPlayer.add(e);
-                }
+        for(CSEntity e in entity.game.world.attachedEntities){
+            if(e != null){
+                try{
+                    if(MathUtils.roundTo(e.sceneAttachment["geometry"]["boundingBox"]["min"]["y"].toDouble(), 100.0) <= playerPos){
+                        entitiesBelowPlayer.add(e);
+                    }
+                }catch(ex){}
             }
         }
         return entitiesBelowPlayer;

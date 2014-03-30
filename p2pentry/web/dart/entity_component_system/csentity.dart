@@ -3,16 +3,20 @@ part of game;
 class CSEntity {
 
     Game game;
+    bool ready = false;
+    List<Function> readinessCallbacks = new List<Function>();
+
     Vector3 _position, _rotation;
     List<EntityComponent> components;
     JsObject sceneAttachment;
+    bool isAttachedToScene = false;
+
+    int nextComponentForInitialisation = 0;
 
     CSEntity(Game this.game, List<EntityComponent> this.components, [Vector3 this._position, Vector3 this._rotation]){
         if(this._position == null) this._position = new Vector3.all(0.0);
         if(this._rotation == null) this._rotation = new Vector3.all(0.0);
-        for(EntityComponent c in components){
-            c._init(this);
-        }
+        advanceComponentIntitialisation();
     }
 
     void tick(num delta){
@@ -66,6 +70,38 @@ class CSEntity {
         position = newLocation;
         this.sceneAttachment["position"].callMethod("set", [newLocation.x, newLocation.y, newLocation.z]);
         this.sceneAttachment["__dirtyPosition"] = true;
+    }
+
+    void advanceComponentIntitialisation(){
+        if(nextComponentForInitialisation < components.length){
+            components[nextComponentForInitialisation++]._init(this);
+        }else{
+            if(this.sceneAttachment != null) makeReady();
+        }
+    }
+
+    void makeReady(){
+        position = position;
+        rotation = rotation;
+
+        ready = true;
+        evaluateReadinessCallbacks();
+    }
+
+    void isReady(Function callback){
+        if(!ready) readinessCallbacks.add(callback);
+        else{
+            callback();
+        }
+    }
+
+    void evaluateReadinessCallbacks(){
+        if(ready){
+            for(Function f in readinessCallbacks){
+                f();
+            }
+            readinessCallbacks.clear();
+        }
     }
 
 }

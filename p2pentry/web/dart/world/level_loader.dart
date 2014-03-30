@@ -14,7 +14,7 @@ class LevelLoader {
 
             __parsePlayer(json["player"]);
             __parseSceneObjects(json["lights"], "Light");
-            game.world.attachW(game.player);
+            game.world.attach(game.player);
             __parseSceneObjects(json["entities"], "Entity");
 
             if(callback!=null) callback(true);
@@ -96,31 +96,30 @@ class LevelLoader {
 
             switch(correctedType){
                 case "AmbientLight": {
-                    attachment = new AmbientLight.fromArray(positionalArguments, namedArguments);
+                    attachment = EntityFactory.createAmbientLight(positionalArguments, namedArguments);
                 }
                     break;
                 case "DirectionalLight": {
-                    attachment = new DirectionalLight.fromArray(positionalArguments, namedArguments);
+                    attachment = EntityFactory.createDirectionalLight(positionalArguments, namedArguments);
                 }
                     break;
                 case "CrateEntity": {
-                    attachment = new CrateEntity.fromArray(positionalArguments, namedArguments);
+                    attachment = EntityFactory.createCrate(positionalArguments, namedArguments);
                 }
                     break;
                 case "PlaneEntity": {
-                    attachment = new PlaneEntity.fromArray(positionalArguments, namedArguments);
+                    attachment = EntityFactory.createPlane(positionalArguments, namedArguments);
                 }
                     break;
                 case "PipeEntity": {
-                    attachment = new PipeEntity.fromArray(positionalArguments, namedArguments);
+                    attachment = EntityFactory.createPipe(positionalArguments, namedArguments);
                 }
                     break;
                 case "PerforatedPipeEntity": {
-                    attachment = new PerforatedPipeEntity.fromArray(positionalArguments, namedArguments);
+                    attachment = EntityFactory.createPerforatedPipe(positionalArguments, namedArguments);
                 }
                     break;
             }
-
             attachment.isReady(() => game.world.attach(attachment));
         }
     }

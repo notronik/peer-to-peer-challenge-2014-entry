@@ -56,6 +56,7 @@ class PlayerInputComponent extends EntityComponent {
         });
 
         gf[EntityNotifications.GF_KEYBINDINGS] = (a) => keybindings;
+        entity.advanceComponentIntitialisation();
     }
 
     void tick(num delta){
@@ -91,14 +92,17 @@ class PlayerInputComponent extends EntityComponent {
 
     void mouseZoomListener(WheelEvent event){
         double zoomFactor = getify(EntityNotifications.GF_ZOOM_FACTOR);
-        if(zoomFactor == null) return;
+        assert(zoomFactor != null);
         zoomFactor += event.deltaY;
         zoomFactor = zoomFactor.clamp(PlayerCameraComponent.MAX_ZOOM, PlayerCameraComponent.MIN_ZOOM);
+        notify(EntityNotifications.NF_PLAYER_CAMERA_ZOOM_FACTOR_UPDATE, zoomFactor);
+        entity.advanceComponentIntitialisation();
     }
 
     void look(){
         Vector3 rotation = getify(EntityNotifications.GF_CAMERA_ROTATION);
-        if(rotation == null) return;
+        assert(rotation != null);
+        // TODO: make this camera rotation
         rotation.x += deltaMouse.y * mouseSensitivity;
         rotation.y += deltaMouse.x * mouseSensitivity;
         rotation.y = cclamp(rotation.y);
