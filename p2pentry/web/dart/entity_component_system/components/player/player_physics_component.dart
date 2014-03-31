@@ -58,23 +58,24 @@ class PlayerPhysicsComponent extends EntityComponent {
 
     void walk(num delta){
         Map<String, dynamic> keybindings = getify(EntityNotifications.GF_KEYBINDINGS);
-        assert(keybindings != null);
+        Vector3 rotation = getify(EntityNotifications.GF_CAMERA_ROTATION);
+        assert(keybindings != null && rotation != null);
         Vector3 change = new Vector3.all(0.0);
         if(keybindings["walk_forwards"]["down"] == true){
-            change.x += Math.cos(radians(entity.rotation.y - 90.0));
-            change.z += Math.sin(radians(entity.rotation.y - 90.0));
+            change.x += Math.cos(radians(rotation.y - 90.0));
+            change.z += Math.sin(radians(rotation.y - 90.0));
         }
         if(keybindings["walk_backwards"]["down"] == true){
-            change.x += Math.cos(radians(entity.rotation.y + 90.0));
-            change.z += Math.sin(radians(entity.rotation.y + 90.0));
+            change.x += Math.cos(radians(rotation.y + 90.0));
+            change.z += Math.sin(radians(rotation.y + 90.0));
         }
         if(keybindings["walk_right"]["down"] == true){
-            change.x += Math.cos(radians(entity.rotation.y));
-            change.z += Math.sin(radians(entity.rotation.y));
+            change.x += Math.cos(radians(rotation.y));
+            change.z += Math.sin(radians(rotation.y));
         }
         if(keybindings["walk_left"]["down"] == true){
-            change.x += Math.cos(radians(entity.rotation.y + 180.0));
-            change.z += Math.sin(radians(entity.rotation.y + 180.0));
+            change.x += Math.cos(radians(rotation.y + 180.0));
+            change.z += Math.sin(radians(rotation.y + 180.0));
         }
         change = change.normalize();
         if(ticksJumpThrottled > 0.0){

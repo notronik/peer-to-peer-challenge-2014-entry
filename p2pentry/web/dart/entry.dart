@@ -26,7 +26,6 @@ part "entity_component_system/components/world_entities/light_configuration_comp
 
 part "world/level_loader.dart";
 part "world/world.dart";
-part "world/scene_object.dart";
 
 void main() {
     Game g = new Game();
