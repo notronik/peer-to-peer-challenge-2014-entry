@@ -22,6 +22,7 @@ part "entity_component_system/components/player/player_camera_component.dart";
 part "entity_component_system/components/world_entities/entity_model_component.dart";
 part "entity_component_system/components/world_entities/entity_physics_component.dart";
 part "entity_component_system/components/world_entities/entity_light_component.dart";
+part "entity_component_system/components/world_entities/entity_scale_component.dart";
 part "entity_component_system/components/world_entities/light_configuration_components/entity_directional_light_configuration_component.dart";
 
 part "world/level_loader.dart";

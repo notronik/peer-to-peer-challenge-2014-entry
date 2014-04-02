@@ -106,6 +106,25 @@ class EntityFactory {
         ], _extractNamedPosition(named), _extractNamedRotation(named));
     }
 
+    static CSEntity createPipeInsertBASE(List<dynamic> positional, Map<Symbol, dynamic> named, num color, Vector3 scale, EntityComponent interactionComponent){
+        return new CSEntity(Game._game, [
+            new EntityModelComponent(EntityModelComponent.TY_EXTERNAL, "res/models/insert.js",
+                materialArguments: {
+                    "color":color,
+                    "ambient":color,
+                    "side":context["THREE"]["BackSide"]
+                }
+            ),
+            // TODO: Create EntityPlayerInteractionComponent for collisions w/ player
+            new EntityScaleComponent(scale),
+            new EntityShadowComponent(false, true)
+        ], _extractNamedPosition(named), _extractNamedRotation(named));
+    }
+
+    static CSEntity createPipeInsertACCEL(List<dynamic> positional, Map<Symbol, dynamic> named){
+        return createPipeInsertBASE(positional, named, 0xff5500, new Vector3.all(0.95), null);
+    }
+
     static Vector3 _extractNamedPosition(Map<Symbol, dynamic> named){
         if(named[new Symbol("position")] != null)
             return named[new Symbol("position")];

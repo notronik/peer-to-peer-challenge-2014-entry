@@ -133,6 +133,17 @@
             "named_arguments" : {
                 "debug" : false
             }
+        },
+        {
+            "type" : "pipe_insert_accel",
+            "named_arguments" : {
+                "position" : {
+                    "x" : -20.0, "y" : 5.0, "z" : 0.0
+                },
+                "rotation" : {
+                    "x" : 0.0, "y" : 90.0, "z" : 0.0
+                }
+            }
         }
     ]
 }

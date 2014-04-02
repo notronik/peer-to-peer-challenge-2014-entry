@@ -119,6 +119,9 @@ class LevelLoader {
                     attachment = EntityFactory.createPerforatedPipe(positionalArguments, namedArguments);
                 }
                     break;
+                case "PipeInsertAccelEntity": {
+                    attachment = EntityFactory.createPipeInsertACCEL(positionalArguments, namedArguments);
+                }
             }
             attachment.isReady(() => game.world.attach(attachment));
         }
