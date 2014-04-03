@@ -15,6 +15,7 @@ part "entity_component_system/csentity.dart";
 part "entity_component_system/entity_component.dart";
 part "entity_component_system/entity_notifications.dart";
 part "entity_component_system/entity_factory.dart";
+part "entity_component_system/entity_type.dart";
 part "entity_component_system/components/common/entity_shadow_component.dart";
 part "entity_component_system/components/player/player_input_component.dart";
 part "entity_component_system/components/player/player_physics_component.dart";

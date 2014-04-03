@@ -38,4 +38,23 @@ class World {
         }
         return objects;
     }
+
+    List<CSEntity> getEntitiesOfType(int type){
+        List<CSEntity> entities = new List<CSEntity>();
+        for(CSEntity e in attachedEntities){
+            if(e.type == type){
+                entities.add(e);
+            }
+        }
+        return entities;
+    }
+
+    CSEntity getEntityByMesh(JsObject mesh, List<CSEntity> from){
+        for(CSEntity e in from){
+            if(e.sceneAttachment == mesh){
+                return e;
+            }
+        }
+        return null;
+    }
 }

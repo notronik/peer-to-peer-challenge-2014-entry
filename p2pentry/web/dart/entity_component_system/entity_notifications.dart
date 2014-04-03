@@ -21,6 +21,8 @@ class EntityNotifications {
     static int NF_PLAYER_CAMERA_RAIL         = ++nfcounter;
     static int NF_SET_CAMERA_ROTATION        = ++nfcounter;
 
+    static int NF_PLAYER_INTERACT_COLLIDE    = ++nfcounter;
+
     static int gfcounter = 0;
     // GET Notifications
     static int GF_ZOOM_FACTOR                = ++gfcounter;

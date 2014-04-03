@@ -16,8 +16,50 @@ class PlayerPhysicsComponent extends EntityComponent {
     bool walking = false;
     double ticksJumpThrottled = 0.0;
 
-    PlayerPhysicsComponent(){
+    JsObject ray_groundDetection_direction = new JsObject(context["THREE"]["Vector3"], [0, -1, 0]);
+    List<JsObject> ray_insertIntersect_directions = [
+        new JsObject(context["THREE"]["Vector3"], [-0.266405, -0.506732, -0.819909]),
+        new JsObject(context["THREE"]["Vector3"], [-0.862104, -0.506732, -0.000000]),
+        new JsObject(context["THREE"]["Vector3"], [-0.266405, -0.506732, 0.819909]),
+        new JsObject(context["THREE"]["Vector3"], [0.697457, -0.506732, 0.506732]),
+        new JsObject(context["THREE"]["Vector3"], [0.697457, -0.506732, -0.506732]),
+        new JsObject(context["THREE"]["Vector3"], [-0.309017, 0.000000, -0.951057]),
+        new JsObject(context["THREE"]["Vector3"], [-1.000000, 0.000000, -0.000000]),
+        new JsObject(context["THREE"]["Vector3"], [-0.309017, 0.000000, 0.951057]),
+        new JsObject(context["THREE"]["Vector3"], [0.809017, 0.000000, 0.587785]),
+        new JsObject(context["THREE"]["Vector3"], [0.809017, 0.000000, -0.587785]),
+        new JsObject(context["THREE"]["Vector3"], [-0.266405, 0.506732, -0.819909]),
+        new JsObject(context["THREE"]["Vector3"], [-0.862104, 0.506732, -0.000000]),
+        new JsObject(context["THREE"]["Vector3"], [-0.266405, 0.506732, 0.819909]),
+        new JsObject(context["THREE"]["Vector3"], [0.697457, 0.506732, 0.506732]),
+        new JsObject(context["THREE"]["Vector3"], [0.697457, 0.506732, -0.506732]),
+        new JsObject(context["THREE"]["Vector3"], [-0.115167, -0.927957, -0.354448]),
+        new JsObject(context["THREE"]["Vector3"], [-0.372689, -0.927957, 0.000000]),
+        new JsObject(context["THREE"]["Vector3"], [-0.115167, -0.927957, 0.354448]),
+        new JsObject(context["THREE"]["Vector3"], [0.301511, -0.927957, 0.219061]),
+        new JsObject(context["THREE"]["Vector3"], [0.301511, -0.927957, -0.219061]),
+        new JsObject(context["THREE"]["Vector3"], [-0.115167, 0.927957, -0.354448]),
+        new JsObject(context["THREE"]["Vector3"], [-0.372689, 0.927957, 0.000000]),
+        new JsObject(context["THREE"]["Vector3"], [-0.115167, 0.927957, 0.354448]),
+        new JsObject(context["THREE"]["Vector3"], [0.301511, 0.927957, 0.219061]),
+        new JsObject(context["THREE"]["Vector3"], [0.301511, 0.927957, -0.219061]),
+    ];
+    double smallestDistanceThreshold = 0.7;
+    JsObject ray_groundDetection, ray_insertIntersect;
 
+    PlayerPhysicsComponent(){
+        ray_groundDetection = new JsObject(context["THREE"]["Raycaster"], [
+           new JsObject(context["THREE"]["Vector3"], [0, 0, 0]),
+           ray_groundDetection_direction,
+           0.0,
+           10.0
+       ]);
+       ray_insertIntersect = new JsObject(context["THREE"]["Raycaster"], [
+            new JsObject(context["THREE"]["Vector3"], [0, 0, 0]),
+            ray_groundDetection_direction,
+            0.0,
+            2.0
+       ]);
     }
 
     void init(){
@@ -40,6 +82,7 @@ class PlayerPhysicsComponent extends EntityComponent {
 
     void tick(num delta){
         walk(delta);
+        doesIntersectWithInsert();
     }
 
     void physTick(int event, dynamic payload){
@@ -118,6 +161,33 @@ class PlayerPhysicsComponent extends EntityComponent {
         }else{
             lastOnGround = false;
             return false;
+        }
+    }
+
+    void doesIntersectWithInsert(){
+        double smallestDistance = 100.0;
+        JsObject smallestDistanceObject;
+        List<CSEntity> objs = entity.game.world.getEntitiesOfType(EntityType.E_PIPE_INSERT);
+        JsArray entities = new JsArray.from(entity.game.world.getEntityMeshes(objs));
+        for(JsObject direction in ray_insertIntersect_directions){
+            ray_insertIntersect.callMethod("set", [
+                entity.sceneAttachment["position"],
+                direction
+            ]);
+            JsArray result = ray_insertIntersect.callMethod("intersectObjects", [entities, false]);
+            if(result.length > 0){
+                double distance = MathUtils.roundTo(result.elementAt(0)["distance"], 100.0);
+                if(distance < smallestDistance){
+                    smallestDistance = distance;
+                    smallestDistanceObject = result.elementAt(0)["object"];
+                }
+            }
+        }
+        if(smallestDistanceObject != null){
+            CSEntity theInsert = entity.game.world.getEntityByMesh(smallestDistanceObject, objs);
+            if(theInsert != null){
+                theInsert.notify(EntityNotifications.NF_PLAYER_INTERACT_COLLIDE, [this, smallestDistance, smallestDistanceObject]);
+            }
         }
     }
 

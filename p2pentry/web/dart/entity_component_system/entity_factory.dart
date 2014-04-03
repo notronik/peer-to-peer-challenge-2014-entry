@@ -3,7 +3,7 @@ part of game;
 class EntityFactory {
     static CSEntity createPlayer({Vector3 position}){
         if(position == null) position = new Vector3.all(0.0);
-        return new CSEntity(Game._game, [
+        return new CSEntity(EntityType.E_PLAYER, Game._game, [
             new PlayerPhysicsComponent(),
             new PlayerInputComponent(),
             new PlayerCameraComponent(),
@@ -12,13 +12,13 @@ class EntityFactory {
     }
 
     static CSEntity createAmbientLight(List<dynamic> positional, Map<Symbol, dynamic> named){
-        return new CSEntity(Game._game, [
+        return new CSEntity(EntityType.EL_AMBIENT, Game._game, [
             new EntityLightComponent(positional[0], "AmbientLight"),
         ], _extractNamedPosition(named), _extractNamedRotation(named));
     }
 
     static CSEntity createDirectionalLight(List<dynamic> positional, Map<Symbol, dynamic> named){
-        return new CSEntity(Game._game, [
+        return new CSEntity(EntityType.EL_DIRECTIONAL, Game._game, [
             new EntityLightComponent(positional[0], "DirectionalLight"),
             new EntityDirectionalLightConfigurationComponent(positional[1], Math.pow(2.0, 13))
         ], _extractNamedPosition(named), _extractNamedRotation(named));
@@ -27,7 +27,7 @@ class EntityFactory {
     static CSEntity createCrate(List<dynamic> positional, Map<Symbol, dynamic> named){
         Vector3 n_size = new Vector3.all(1.0);
         if(named[new Symbol("size")] != null) n_size = named[new Symbol("size")];
-        return new CSEntity(Game._game, [
+        return new CSEntity(EntityType.E_CRATE, Game._game, [
             new EntityModelComponent(EntityModelComponent.TY_PREDEFINED, "CubeGeometry",
                     predefinedArguments: [n_size.x, n_size.y, n_size.y],
                     materialArguments: {
@@ -43,7 +43,7 @@ class EntityFactory {
         Vector2 n_size = new Vector2(100.0, 100.0);
         const double PLANE_THICKNESS = 0.0009;
         if(named[new Symbol("size")] != null) n_size = named[new Symbol("size")];
-        return new CSEntity(Game._game, [
+        return new CSEntity(EntityType.E_PLANE, Game._game, [
             new EntityModelComponent(EntityModelComponent.TY_PREDEFINED, "CubeGeometry",
                     predefinedArguments: [n_size.x, PLANE_THICKNESS, n_size.y],
                     materialArguments: {
@@ -77,7 +77,7 @@ class EntityFactory {
         texture["wrapT"] = context["THREE"]["MirroredRepeatWrapping"];
         texture["repeat"].callMethod("set", [10, 10]);
 
-        return new CSEntity(Game._game, [
+        return new CSEntity(EntityType.E_PIPE, Game._game, [
             new EntityModelComponent(EntityModelComponent.TY_PREDEFINED, "TubeGeometry",
                 predefinedArguments: [spline, n_segments, a_radius, n_radiusSegments, n_closed, n_debug],
                 materialArguments: {
@@ -93,7 +93,7 @@ class EntityFactory {
     }
 
     static CSEntity createPerforatedPipe(List<dynamic> positional, Map<Symbol, dynamic> named){
-        return new CSEntity(Game._game, [
+        return new CSEntity(EntityType.E_PERF1_PIPE, Game._game, [
             new EntityModelComponent(EntityModelComponent.TY_EXTERNAL, "res/models/perf1.js",
                 materialArguments: {
                     "color":0xa9ca38,
@@ -107,7 +107,7 @@ class EntityFactory {
     }
 
     static CSEntity createPipeInsertBASE(List<dynamic> positional, Map<Symbol, dynamic> named, num color, Vector3 scale, EntityComponent interactionComponent){
-        return new CSEntity(Game._game, [
+        return new CSEntity(EntityType.E_PIPE_INSERT, Game._game, [
             new EntityModelComponent(EntityModelComponent.TY_EXTERNAL, "res/models/insert.js",
                 materialArguments: {
                     "color":color,
@@ -115,7 +115,6 @@ class EntityFactory {
                     "side":context["THREE"]["BackSide"]
                 }
             ),
-            // TODO: Create EntityPlayerInteractionComponent for collisions w/ player
             new EntityScaleComponent(scale),
             new EntityShadowComponent(false, true)
         ], _extractNamedPosition(named), _extractNamedRotation(named));

@@ -6,6 +6,7 @@ class CSEntity {
     bool ready = false;
     List<Function> readinessCallbacks = new List<Function>();
 
+    int type;
     Vector3 _position, _rotation;
     List<EntityComponent> components;
     JsObject sceneAttachment;
@@ -13,7 +14,7 @@ class CSEntity {
 
     int nextComponentForInitialisation = 0;
 
-    CSEntity(Game this.game, List<EntityComponent> this.components, [Vector3 this._position, Vector3 this._rotation]){
+    CSEntity(int this.type, Game this.game, List<EntityComponent> this.components, [Vector3 this._position, Vector3 this._rotation]){
         if(this._position == null) this._position = new Vector3.all(0.0);
         if(this._rotation == null) this._rotation = new Vector3.all(0.0);
         advanceComponentIntitialisation();
