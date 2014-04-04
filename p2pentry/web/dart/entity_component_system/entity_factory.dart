@@ -20,7 +20,7 @@ class EntityFactory {
     static CSEntity createDirectionalLight(List<dynamic> positional, Map<Symbol, dynamic> named){
         return new CSEntity(EntityType.EL_DIRECTIONAL, Game._game, [
             new EntityLightComponent(positional[0], "DirectionalLight"),
-            new EntityDirectionalLightConfigurationComponent(positional[1], Math.pow(2.0, 13))
+            new EntityDirectionalLightConfigurationComponent(positional[1], Math.pow(2.0, 12))
         ], _extractNamedPosition(named), _extractNamedRotation(named));
     }
 
