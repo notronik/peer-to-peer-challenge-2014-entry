@@ -115,13 +115,25 @@ class EntityFactory {
                     "side":context["THREE"]["BackSide"]
                 }
             ),
+            interactionComponent,
             new EntityScaleComponent(scale),
             new EntityShadowComponent(false, true)
         ], _extractNamedPosition(named), _extractNamedRotation(named));
     }
 
     static CSEntity createPipeInsertACCEL(List<dynamic> positional, Map<Symbol, dynamic> named){
-        return createPipeInsertBASE(positional, named, 0xff5500, new Vector3.all(0.95), null);
+        return createPipeInsertBASE(positional, named, 0xff5500, new Vector3.all(0.95), new EntityPlayerInteractionComponent(
+            collisionWithPlayer: (player, insert, distance){
+                CSEntity p = player;
+                for(EntityComponent c in p.components){
+                    if(c is PlayerPhysicsComponent){
+                        PlayerPhysicsComponent co = c;
+                        // whatever
+                        return;
+                    }
+                }
+            }
+        ));
     }
 
     static Vector3 _extractNamedPosition(Map<Symbol, dynamic> named){
