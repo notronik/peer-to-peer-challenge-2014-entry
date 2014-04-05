@@ -2,12 +2,12 @@ part of game;
 
 class EntityPlayerInteractionComponent extends EntityComponent {
 
-    Function collisionWithPlayer;
+    Function collisionWithPlayerOnce;
 
-    EntityPlayerInteractionComponent({Function this.collisionWithPlayer});
+    EntityPlayerInteractionComponent({Function this.collisionWithPlayerOnce});
 
     void init(){
-        if(collisionWithPlayer != null) nf[EntityNotifications.NF_PLAYER_INTERACT_COLLIDE] = handleInteractCollide;
+        if(collisionWithPlayerOnce != null) nf[EntityNotifications.NF_PLAYER_INTERACT_COLLIDE] = handleInteractCollideOnce;
         entity.advanceComponentIntitialisation();
     }
 
@@ -15,8 +15,8 @@ class EntityPlayerInteractionComponent extends EntityComponent {
 
     }
 
-    void handleInteractCollide(int event, dynamic payload){
-        collisionWithPlayer(payload[0], payload[1], payload[2]);
+    void handleInteractCollideOnce(int event, dynamic payload){
+        collisionWithPlayerOnce(payload[0], payload[1], payload[2]);
     }
 
 }

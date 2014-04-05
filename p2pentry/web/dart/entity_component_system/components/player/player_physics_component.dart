@@ -82,11 +82,11 @@ class PlayerPhysicsComponent extends EntityComponent {
 
     void tick(num delta){
         walk(delta);
-        doesIntersectWithInsert();
     }
 
     void physTick(int event, dynamic payload){
         notify(EntityNotifications.NF_PLAYER_CAMERA_UPDATE, null);
+        doesIntersectWithInsert();
         // Limit speed of walking
         JsObject linvel = entity.sceneAttachment.callMethod("getLinearVelocity");
         Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
@@ -184,9 +184,11 @@ class PlayerPhysicsComponent extends EntityComponent {
             }
         }
         if(smallestDistanceObject != null){
-            CSEntity theInsert = entity.game.world.getEntityByMesh(smallestDistanceObject, objs);
-            if(theInsert != null){
-                theInsert.notify(EntityNotifications.NF_PLAYER_INTERACT_COLLIDE, [this, smallestDistance, smallestDistanceObject]);
+            if(smallestDistance < smallestDistanceThreshold){
+                CSEntity theInsert = entity.game.world.getEntityByMesh(smallestDistanceObject, objs);
+                if(theInsert != null){
+                    theInsert.notify(EntityNotifications.NF_PLAYER_INTERACT_COLLIDE, [this, smallestDistance, smallestDistanceObject]);
+                }
             }
         }
     }

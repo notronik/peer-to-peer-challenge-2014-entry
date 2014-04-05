@@ -123,15 +123,12 @@ class EntityFactory {
 
     static CSEntity createPipeInsertACCEL(List<dynamic> positional, Map<Symbol, dynamic> named){
         return createPipeInsertBASE(positional, named, 0xff5500, new Vector3.all(0.95), new EntityPlayerInteractionComponent(
-            collisionWithPlayer: (player, insert, distance){
-                CSEntity p = player;
-                for(EntityComponent c in p.components){
-                    if(c is PlayerPhysicsComponent){
-                        PlayerPhysicsComponent co = c;
-                        // whatever
-                        return;
-                    }
-                }
+            collisionWithPlayerOnce: (playerPhys, distance, insert){
+                JsObject linvel = playerPhys.entity.sceneAttachment.callMethod("getLinearVelocity");
+                linvel["x"] = -linvel["x"];
+                linvel["z"] = -linvel["z"];
+                playerPhys.entity.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linvel["x"].toDouble(), 0.0, linvel["z"].toDouble()])]);
+                return;
             }
         ));
     }
