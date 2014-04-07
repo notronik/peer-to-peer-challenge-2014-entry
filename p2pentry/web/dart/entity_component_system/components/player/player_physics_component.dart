@@ -84,8 +84,13 @@ class PlayerPhysicsComponent extends EntityComponent {
         walk(delta);
     }
 
+    int lastTime = new DateTime.now().millisecondsSinceEpoch;
     void physTick(int event, dynamic payload){
-        notify(EntityNotifications.NF_PLAYER_CAMERA_UPDATE, null);
+        int now = new DateTime.now().millisecondsSinceEpoch;
+        double difference = (now.toDouble() - lastTime.toDouble()) / 1000.0;
+        lastTime = now;;
+
+        notify(EntityNotifications.NF_PLAYER_CAMERA_UPDATE, difference);
         doesIntersectWithInsert();
         // Limit speed of walking
         JsObject linvel = entity.sceneAttachment.callMethod("getLinearVelocity");
@@ -206,6 +211,16 @@ class PlayerPhysicsComponent extends EntityComponent {
             }
         }
         return entitiesBelowPlayer;
+    }
+
+    void jump(){
+        if(ticksJumpThrottled == 0.0){
+            JsObject linvel = entity.sceneAttachment.callMethod("getLinearVelocity");
+            entity.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linvel["x"].toDouble(), 0.0, linvel["z"].toDouble()])]);
+            ticksJumpThrottled = 6.0;
+
+            entity.sceneAttachment.callMethod("applyCentralImpulse", [new JsObject(context["THREE"]["Vector3"], [0.0, playerJumpSpeed * (1.0/120.0) * playerJumpSpeed, 0.0])]);
+        }
     }
 
 }

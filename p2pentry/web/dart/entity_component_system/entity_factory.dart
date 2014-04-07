@@ -92,9 +92,23 @@ class EntityFactory {
         ], _extractNamedPosition(named), _extractNamedRotation(named));
     }
 
-    static CSEntity createPerforatedPipe(List<dynamic> positional, Map<Symbol, dynamic> named){
+    static CSEntity createPerforatedPipe1(List<dynamic> positional, Map<Symbol, dynamic> named){
         return new CSEntity(EntityType.E_PERF1_PIPE, Game._game, [
             new EntityModelComponent(EntityModelComponent.TY_EXTERNAL, "res/models/perf1.js",
+                materialArguments: {
+                    "color":0xa9ca38,
+                    "ambient":0xa9ca38,
+                    "side":context["THREE"]["BackSide"]
+                },
+                physicsComponent: new EntityPhysicsComponent("ConcaveMesh", 0.0, 1.0, 0.0)
+            ),
+            new EntityShadowComponent(false, true)
+        ], _extractNamedPosition(named), _extractNamedRotation(named));
+    }
+
+    static CSEntity createPerforatedPipe2(List<dynamic> positional, Map<Symbol, dynamic> named){
+        return new CSEntity(EntityType.E_PERF2_PIPE, Game._game, [
+            new EntityModelComponent(EntityModelComponent.TY_EXTERNAL, "res/models/perf2.js",
                 materialArguments: {
                     "color":0xa9ca38,
                     "ambient":0xa9ca38,
@@ -121,14 +135,60 @@ class EntityFactory {
         ], _extractNamedPosition(named), _extractNamedRotation(named));
     }
 
-    static CSEntity createPipeInsertACCEL(List<dynamic> positional, Map<Symbol, dynamic> named){
+    static CSEntity createPipeInsertREFLECT(List<dynamic> positional, Map<Symbol, dynamic> named){
         return createPipeInsertBASE(positional, named, 0xff5500, new Vector3.all(0.95), new EntityPlayerInteractionComponent(
             collisionWithPlayerOnce: (playerPhys, distance, insert){
+                for(EntityComponent co in playerPhys.entity.components){
+                    if(co is PlayerInputComponent){
+                        co.keybindings["walk_forwards"]["down"] = false;
+                        co.keybindings["walk_backwards"]["down"] = false;
+                        co.keybindings["walk_right"]["down"] = false;
+                        co.keybindings["walk_left"]["down"] = false;
+
+                    }
+                }
+
                 JsObject linvel = playerPhys.entity.sceneAttachment.callMethod("getLinearVelocity");
                 linvel["x"] = -linvel["x"];
                 linvel["z"] = -linvel["z"];
                 playerPhys.entity.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linvel["x"].toDouble(), 0.0, linvel["z"].toDouble()])]);
                 return;
+            }
+        ));
+    }
+
+    static CSEntity createPipeInsertCATAPULT(List<dynamic> positional, Map<Symbol, dynamic> named){
+        return createPipeInsertBASE(positional, named, 0x0055ff, new Vector3.all(0.95), new EntityPlayerInteractionComponent(
+            collisionWithPlayerOnce: (playerPhys, distance, insert){
+                for(EntityComponent co in playerPhys.entity.components){
+                    if(co is PlayerInputComponent){
+                        co.keybindings["walk_forwards"]["down"] = false;
+                        co.keybindings["walk_backwards"]["down"] = false;
+                        co.keybindings["walk_right"]["down"] = false;
+                        co.keybindings["walk_left"]["down"] = false;
+
+                    }
+                }
+
+                JsObject linvel = playerPhys.entity.sceneAttachment.callMethod("getLinearVelocity");
+                double catapultFactor = 3.4;
+                linvel["x"] = linvel["x"] * catapultFactor;
+                linvel["z"] = linvel["z"] * catapultFactor;
+                playerPhys.entity.sceneAttachment.callMethod("setLinearVelocity", [new JsObject(context["THREE"]["Vector3"], [linvel["x"].toDouble(), 0.0, linvel["z"].toDouble()])]);
+                return;
+            }
+        ));
+    }
+
+    static CSEntity createPipeInsertJUMP(List<dynamic> positional, Map<Symbol, dynamic> named){
+        return createPipeInsertBASE(positional, named, 0x00ff55, new Vector3.all(0.95), new EntityPlayerInteractionComponent(
+            collisionWithPlayerOnce: (playerPhys, distance, insert){
+                for(EntityComponent co in playerPhys.entity.components){
+                    if(co is PlayerPhysicsComponent){
+                        co.jump();
+                        return;
+                    }
+                }
             }
         ));
     }

@@ -24,7 +24,8 @@ class PlayerCameraComponent extends EntityComponent {
         camera = new JsObject(context["THREE"]["PerspectiveCamera"], [FOV, canvas.width / canvas.height, ZNEAR, ZFAR]);
 
         nf[EntityNotifications.NF_PLAYER_CAMERA_UPDATE] = (a, b){
-            updateManualCamera(a, b);
+//            updateManualCamera(a, b);
+            updateRailCamera(a, b);
             camera.callMethod("lookAt", [entity.sceneAttachment["position"]]);
         };
         nf[EntityNotifications.NF_PLAYER_CAMERA_POSITION_UPDATE] = positionUpdate;
@@ -69,14 +70,14 @@ class PlayerCameraComponent extends EntityComponent {
     Vector3 lastPosition = new Vector3.all(0.0);
     void updateRailCamera(int event, num delta){
         JsObject linvel = entity.sceneAttachment.callMethod("getLinearVelocity");
-        Vector3 currentPosition = new Vector3(entity.sceneAttachment["position"]["x"].toDouble(), entity.sceneAttachment["position"]["y"].toDouble(), entity.sceneAttachment["position"]["z"].toDouble());
+        Vector3 currentPosition = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
         Vector3 deltaPosition = currentPosition - lastPosition;
         lastPosition = currentPosition;
 
         double velocity = deltaPosition.length;
         double length = cameraRail.callMethod("getLength");
         double deltadpoint = velocity / length;
-        dpoint += deltadpoint;
+        dpoint += deltadpoint * delta;
         print("$dpoint");
 //        JsObject point = cameraRail.callMethod("getPointAt", [dpoint]);
 //        camera["position"] = point;

@@ -60,7 +60,7 @@ class PlayerInputComponent extends EntityComponent {
     }
 
     void tick(num delta){
-        if(keybindings["reset"]["down"] == true) entity.teleport(entity.game.world.lastStart);
+//        if(keybindings["reset"]["down"] == true) entity.position = entity.game.world.lastStart;
     }
 
     void keyDownListener(KeyboardEvent event){

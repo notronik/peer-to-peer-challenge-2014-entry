@@ -67,12 +67,6 @@ class CSEntity {
         this.sceneAttachment["__dirtyPosition"] = true;
     }
 
-    void teleport(Vector3 newLocation){
-        position = newLocation;
-        this.sceneAttachment["position"].callMethod("set", [newLocation.x, newLocation.y, newLocation.z]);
-        this.sceneAttachment["__dirtyPosition"] = true;
-    }
-
     void advanceComponentIntitialisation(){
         if(nextComponentForInitialisation < components.length){
             components[nextComponentForInitialisation++]._init(this);

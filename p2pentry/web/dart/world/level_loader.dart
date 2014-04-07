@@ -36,7 +36,7 @@ class LevelLoader {
     void __parsePlayer(dynamic json){
         game.world.lastStart = new Vector3(json["start"]["position"]["x"].toDouble(), json["start"]["position"]["y"].toDouble(), json["start"]["position"]["z"].toDouble());
         game.world.lastFinish = new Vector3(json["finish"]["position"]["x"].toDouble(), json["finish"]["position"]["y"].toDouble(), json["finish"]["position"]["z"].toDouble());
-        game.player.teleport(game.world.lastStart);
+        game.player.position = game.world.lastStart;
 
         List<JsObject> jpoints = new List<JsObject>();
         for(Map o in json["camera_rail"]){
@@ -115,13 +115,26 @@ class LevelLoader {
                     attachment = EntityFactory.createPipe(positionalArguments, namedArguments);
                 }
                     break;
-                case "PerforatedPipeEntity": {
-                    attachment = EntityFactory.createPerforatedPipe(positionalArguments, namedArguments);
+                case "PerforatedPipe1Entity": {
+                    attachment = EntityFactory.createPerforatedPipe1(positionalArguments, namedArguments);
                 }
                     break;
-                case "PipeInsertAccelEntity": {
-                    attachment = EntityFactory.createPipeInsertACCEL(positionalArguments, namedArguments);
+                case "PerforatedPipe2Entity": {
+                    attachment = EntityFactory.createPerforatedPipe2(positionalArguments, namedArguments);
                 }
+                    break;
+                case "PipeInsertReflectEntity": {
+                    attachment = EntityFactory.createPipeInsertREFLECT(positionalArguments, namedArguments);
+                }
+                    break;
+                case "PipeInsertCatapultEntity": {
+                    attachment = EntityFactory.createPipeInsertCATAPULT(positionalArguments, namedArguments);
+                }
+                    break;
+                case "PipeInsertJumpEntity": {
+                    attachment = EntityFactory.createPipeInsertJUMP(positionalArguments, namedArguments);
+                }
+                    break;
             }
             attachment.isReady(() => game.world.attach(attachment));
         }
