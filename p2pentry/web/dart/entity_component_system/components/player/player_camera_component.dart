@@ -66,21 +66,28 @@ class PlayerCameraComponent extends EntityComponent {
         positionUpdate(-1, workPos);
     }
 
-    double dpoint = 0.0;
     Vector3 lastPosition = new Vector3.all(0.0);
     void updateRailCamera(int event, num delta){
-        JsObject linvel = entity.sceneAttachment.callMethod("getLinearVelocity");
-        Vector3 currentPosition = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
-        Vector3 deltaPosition = currentPosition - lastPosition;
-        lastPosition = currentPosition;
+        Vector3 cameraPosition = new Vector3(entity.sceneAttachment["position"]["x"].toDouble(),
+                entity.sceneAttachment["position"]["y"].toDouble(),
+                        entity.sceneAttachment["position"]["z"].toDouble());
+        Vector3 deltaPosition = new Vector3(cameraPosition.x - lastPosition.x,
+                cameraPosition.y - lastPosition.y,
+                        cameraPosition.z - lastPosition.z);
+        Vector3 movementDirection = deltaPosition.normalized().multiply(new Vector3.all(-3.0));
+        print(movementDirection);
+        lastPosition = cameraPosition;
 
-        double velocity = deltaPosition.length;
-        double length = cameraRail.callMethod("getLength");
-        double deltadpoint = velocity / length;
-        dpoint += deltadpoint * delta;
-        print("$dpoint");
-//        JsObject point = cameraRail.callMethod("getPointAt", [dpoint]);
-//        camera["position"] = point;
+        camera["position"]["x"] = cameraPosition.x + movementDirection.x;
+        camera["position"]["y"] = cameraPosition.y + movementDirection.y;
+        camera["position"]["z"] = cameraPosition.z + movementDirection.z;
+
+//        JsObject raycaster = new JsObject(context["THREE"]["Raycaster"], [
+//            entity.sceneAttachment["position"],
+//            new JsObject(context["THREE"]["Vector3"], [0, -1, 0]),
+//            0.0,
+//            10.0
+//        ]);
     }
 
 }
