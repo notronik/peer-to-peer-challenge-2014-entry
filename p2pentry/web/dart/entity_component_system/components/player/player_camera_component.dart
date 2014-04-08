@@ -24,8 +24,7 @@ class PlayerCameraComponent extends EntityComponent {
         camera = new JsObject(context["THREE"]["PerspectiveCamera"], [FOV, canvas.width / canvas.height, ZNEAR, ZFAR]);
 
         nf[EntityNotifications.NF_PLAYER_CAMERA_UPDATE] = (a, b){
-//            updateManualCamera(a, b);
-            updateRailCamera(a, b);
+            updateManualCamera(a, b);
             camera.callMethod("lookAt", [entity.sceneAttachment["position"]]);
         };
         nf[EntityNotifications.NF_PLAYER_CAMERA_POSITION_UPDATE] = positionUpdate;
@@ -64,30 +63,6 @@ class PlayerCameraComponent extends EntityComponent {
         workPos.y += entityPos["y"];
         workPos.z += entityPos["z"];
         positionUpdate(-1, workPos);
-    }
-
-    Vector3 lastPosition = new Vector3.all(0.0);
-    void updateRailCamera(int event, num delta){
-        Vector3 cameraPosition = new Vector3(entity.sceneAttachment["position"]["x"].toDouble(),
-                entity.sceneAttachment["position"]["y"].toDouble(),
-                        entity.sceneAttachment["position"]["z"].toDouble());
-        Vector3 deltaPosition = new Vector3(cameraPosition.x - lastPosition.x,
-                cameraPosition.y - lastPosition.y,
-                        cameraPosition.z - lastPosition.z);
-        Vector3 movementDirection = deltaPosition.normalized().multiply(new Vector3.all(-3.0));
-        print(movementDirection);
-        lastPosition = cameraPosition;
-
-        camera["position"]["x"] = cameraPosition.x + movementDirection.x;
-        camera["position"]["y"] = cameraPosition.y + movementDirection.y;
-        camera["position"]["z"] = cameraPosition.z + movementDirection.z;
-
-//        JsObject raycaster = new JsObject(context["THREE"]["Raycaster"], [
-//            entity.sceneAttachment["position"],
-//            new JsObject(context["THREE"]["Vector3"], [0, -1, 0]),
-//            0.0,
-//            10.0
-//        ]);
     }
 
 }
