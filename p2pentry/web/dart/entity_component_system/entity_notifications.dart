@@ -18,7 +18,6 @@ class EntityNotifications {
     static int NF_PLAYER_CAMERA_POSITION_UPDATE = ++nfcounter;
     static int NF_PLAYER_MOUSE_MOVE          = ++nfcounter;
     static int NF_PLAYER_PHYSICS_TICK        = ++nfcounter;
-    static int NF_PLAYER_CAMERA_RAIL         = ++nfcounter;
     static int NF_SET_CAMERA_ROTATION        = ++nfcounter;
 
     static int NF_PLAYER_INTERACT_COLLIDE    = ++nfcounter;

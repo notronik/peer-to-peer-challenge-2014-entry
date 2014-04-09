@@ -3,7 +3,6 @@ part of game;
 class PlayerCameraComponent extends EntityComponent {
     CanvasElement canvas;
     JsObject camera;
-    JsObject cameraRail;
 
     Vector3 cameraRotation = new Vector3.all(0.0);
 
@@ -25,11 +24,15 @@ class PlayerCameraComponent extends EntityComponent {
 
         nf[EntityNotifications.NF_PLAYER_CAMERA_UPDATE] = (a, b){
 //            updateManualCamera(a, b);
-            updateRailCamera(a, b);
+            Vector3 playerPosition = new Vector3(
+                    entity.sceneAttachment["position"]["x"].toDouble(),
+                    entity.sceneAttachment["position"]["y"].toDouble(),
+                    entity.sceneAttachment["position"]["z"].toDouble());
+
             camera.callMethod("lookAt", [entity.sceneAttachment["position"]]);
+            updateAutomaticCamera(a, b, playerPosition);
         };
         nf[EntityNotifications.NF_PLAYER_CAMERA_POSITION_UPDATE] = positionUpdate;
-        nf[EntityNotifications.NF_PLAYER_CAMERA_RAIL] = (a, b) => cameraRail = b;
         nf[EntityNotifications.NF_SET_CAMERA_ROTATION] = (a, b) => cameraRotation = b;
         nf[EntityNotifications.NF_PLAYER_CAMERA_ZOOM_FACTOR_UPDATE] = (a, b) => zoomFactor = b;
         gf[EntityNotifications.GF_ZOOM_FACTOR] = (a) => zoomFactor;
@@ -66,28 +69,17 @@ class PlayerCameraComponent extends EntityComponent {
         positionUpdate(-1, workPos);
     }
 
-    Vector3 lastPosition = new Vector3.all(0.0);
-    void updateRailCamera(int event, num delta){
-        Vector3 cameraPosition = new Vector3(entity.sceneAttachment["position"]["x"].toDouble(),
-                entity.sceneAttachment["position"]["y"].toDouble(),
-                        entity.sceneAttachment["position"]["z"].toDouble());
-        Vector3 deltaPosition = new Vector3(cameraPosition.x - lastPosition.x,
-                cameraPosition.y - lastPosition.y,
-                        cameraPosition.z - lastPosition.z);
-        Vector3 movementDirection = deltaPosition.normalized().multiply(new Vector3.all(-3.0));
-        print(movementDirection);
-        lastPosition = cameraPosition;
+    void updateAutomaticCamera(int event, num delta, Vector3 playerPosition){
+        JsObject linvel = entity.sceneAttachment.callMethod("getLinearVelocity");
+        Vector3 linearVelocity = new Vector3(linvel["x"].toDouble(), linvel["y"].toDouble(), linvel["z"].toDouble());
+        Vector3 movementDirection = linearVelocity.normalized();
+        double mfactor = -3.0;
 
-        camera["position"]["x"] = cameraPosition.x + movementDirection.x;
-        camera["position"]["y"] = cameraPosition.y + movementDirection.y;
-        camera["position"]["z"] = cameraPosition.z + movementDirection.z;
 
-//        JsObject raycaster = new JsObject(context["THREE"]["Raycaster"], [
-//            entity.sceneAttachment["position"],
-//            new JsObject(context["THREE"]["Vector3"], [0, -1, 0]),
-//            0.0,
-//            10.0
-//        ]);
+        playerPosition.x += (movementDirection.x * mfactor);
+        playerPosition.y += (movementDirection.y * mfactor);
+        playerPosition.z += (movementDirection.z * mfactor);
+        positionUpdate(-1, playerPosition);
     }
 
 }

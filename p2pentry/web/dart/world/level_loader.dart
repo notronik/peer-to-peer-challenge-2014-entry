@@ -37,13 +37,6 @@ class LevelLoader {
         game.world.lastStart = new Vector3(json["start"]["position"]["x"].toDouble(), json["start"]["position"]["y"].toDouble(), json["start"]["position"]["z"].toDouble());
         game.world.lastFinish = new Vector3(json["finish"]["position"]["x"].toDouble(), json["finish"]["position"]["y"].toDouble(), json["finish"]["position"]["z"].toDouble());
         game.player.position = game.world.lastStart;
-
-        List<JsObject> jpoints = new List<JsObject>();
-        for(Map o in json["camera_rail"]){
-            Vector3 p = __parseVector(o);
-            jpoints.add(new JsObject(context["THREE"]["Vector3"], [p.x, p.y, p.z]));
-        }
-        game.player.notify(EntityNotifications.NF_PLAYER_CAMERA_RAIL, new JsObject(context["THREE"]["SplineCurve3"], [new JsArray.from(jpoints)]));
     }
 
     void __parseSceneObjects(dynamic json, String classIdentifier){

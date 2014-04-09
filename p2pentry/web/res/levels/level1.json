@@ -10,14 +10,7 @@
                 "x" : 0.0, "y" : 0.0, "z" : 0.0
             },
             "registration_radius" : 5
-        },
-        "camera_rail" : [
-            {"x" : 0.0, "y" : 60.0, "z" : 0.0},
-            {"x" : 0.0, "y" : 30.0, "z" : 30.0},
-            {"x" : 60.0, "y" : 10.0, "z" : 30.0},
-            {"x" : 0.0, "y" : 5.0, "z" : 0.0},
-            {"x" : -20.0, "y" : 5.0, "z" : 0.0}
-        ]
+        }
     },
     "lights" : [
         {
@@ -42,57 +35,6 @@
         }
     ],
     "entities" : [
-        {
-            "type" : "plane"
-        },
-        {
-            "type" : "crate",
-            "named_arguments" : {
-                "position" : {
-                    "x" : 0.0, "y" : 10.0, "z" : 0.0
-                }
-            }
-        },
-        {
-            "type" : "crate",
-            "named_arguments" : {
-                "position" : {
-                    "x" : 0.0, "y" : 10.9, "z" : 0.0
-                }
-            }
-        },
-        {
-            "type" : "crate",
-            "named_arguments" : {
-                "position" : {
-                    "x" : 0.0, "y" : 11.8, "z" : 0.0
-                }
-            }
-        },
-        {
-            "type" : "crate",
-            "named_arguments" : {
-                "position" : {
-                    "x" : 0.0, "y" : 10.0, "z" : -1.0
-                }
-            }
-        },
-        {
-            "type" : "crate",
-            "named_arguments" : {
-                "position" : {
-                    "x" : 0.0, "y" : 10.9, "z" : -1.0
-                }
-            }
-        },
-        {
-            "type" : "crate",
-            "named_arguments" : {
-                "position" : {
-                    "x" : 0.0, "y" : 10.0, "z" : -2.0
-                }
-            }
-        },
         {
             "type" : "pipe",
             "positional_arguments" : [
