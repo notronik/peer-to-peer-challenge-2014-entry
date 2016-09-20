@@ -7,7 +7,6 @@ class LevelLoader {
     LevelLoader(Game this.game);
 
     bool load(String url, [Function callback]){
-        Future fut;
         HttpRequest.getString(url).then((String data){
             JsonDecoder d = new JsonDecoder();
             dynamic json = d.convert(data);

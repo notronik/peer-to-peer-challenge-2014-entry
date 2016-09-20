@@ -23,14 +23,14 @@ class PlayerCameraComponent extends EntityComponent {
         camera = new JsObject(context["THREE"]["PerspectiveCamera"], [FOV, canvas.width / canvas.height, ZNEAR, ZFAR]);
 
         nf[EntityNotifications.NF_PLAYER_CAMERA_UPDATE] = (a, b){
-//            updateManualCamera(a, b);
-            Vector3 playerPosition = new Vector3(
-                    entity.sceneAttachment["position"]["x"].toDouble(),
-                    entity.sceneAttachment["position"]["y"].toDouble(),
-                    entity.sceneAttachment["position"]["z"].toDouble());
+            updateManualCamera(a, b);
+//            Vector3 playerPosition = new Vector3(
+//                    entity.sceneAttachment["position"]["x"].toDouble(),
+//                    entity.sceneAttachment["position"]["y"].toDouble(),
+//                    entity.sceneAttachment["position"]["z"].toDouble());
 
             camera.callMethod("lookAt", [entity.sceneAttachment["position"]]);
-            updateAutomaticCamera(a, b, playerPosition);
+//            updateAutomaticCamera(a, b, playerPosition);
         };
         nf[EntityNotifications.NF_PLAYER_CAMERA_POSITION_UPDATE] = positionUpdate;
         nf[EntityNotifications.NF_SET_CAMERA_ROTATION] = (a, b) => cameraRotation = b;

@@ -31,5 +31,5 @@ part "world/level_loader.dart";
 part "world/world.dart";
 
 void main() {
-    Game g = new Game();
+    new Game();
 }
